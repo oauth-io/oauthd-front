@@ -19,5 +19,5 @@ module.exports = (env) ->
 			directory: __dirname + '/public'
 			default: __dirname + '/public/index.html'
 		callback()
-		
-	return exp
+
+	exp
