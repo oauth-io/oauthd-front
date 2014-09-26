@@ -1,0 +1,6 @@
+{
+	"name": "front",
+	"description": "The default front for oauthd.",
+	"version": "0.0.1",
+	"main": "index.js"
+}
