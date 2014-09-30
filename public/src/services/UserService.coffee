@@ -11,7 +11,7 @@ module.exports = (app) ->
 					console.log user.email, user.pass
 					$http({
 						method: 'POST',
-						url: process.env.host + '/signin',
+						url: '/signin',
 						data: {
 							name: user.email,
 							pass: user.pass
