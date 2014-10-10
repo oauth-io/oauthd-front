@@ -83,7 +83,7 @@ require('./controllers/Apps/AppProviderListCtrl') app
 
 app.run(["$rootScope", "UserService",
 	($rootScope, UserService) ->
-		console.log "Hello test version."
+		console.log "Hello test new version2!"
 		window.scope = $rootScope
 		$rootScope.loading = true
 		$rootScope.logged_user = amplify.store('user')
