@@ -1,3 +1,3 @@
-bin/staticjs
+bin
 node_modules
 .DS_Store
