@@ -38,10 +38,8 @@ module.exports = (app) ->
 			PluginService.getAll()
 				.then (plugins) ->
 					$scope.plugins = []
-					for name in plugins
-						plugin = {}
-						plugin.name = name
-						plugin.url = "/oauthd/plugins/" + name
+					for plugin in plugins
+						plugin.url = "/oauthd/plugins/" + plugin.name
 						$scope.plugins.push plugin
 				.fail (e) ->
 					console.log e

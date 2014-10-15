@@ -526,17 +526,16 @@ module.exports = function(app) {
         return $scope.$apply();
       });
       return PluginService.getAll().then(function(plugins) {
-        var name, plugin, _i, _len, _results;
+        var plugin, _i, _len;
+        console.log("plugins", plugins);
         $scope.plugins = [];
-        _results = [];
         for (_i = 0, _len = plugins.length; _i < _len; _i++) {
-          name = plugins[_i];
-          plugin = {};
-          plugin.name = name;
-          plugin.url = "/oauthd/plugins/" + name;
-          _results.push($scope.plugins.push(plugin));
+          plugin = plugins[_i];
+          console.log("plugin", plugin);
+          plugin.url = "/oauthd/plugins/" + plugin.name;
+          $scope.plugins.push(plugin);
         }
-        return _results;
+        return console.log("$scope.plugins", $scope.plugins);
       }).fail(function(e) {
         return console.log(e);
       })["finally"](function() {
