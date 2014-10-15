@@ -13,7 +13,7 @@ module.exports = (app) ->
 				return count
 
 			AppService.all()
-				.then (apps) ->
+				.then (apps) ->	
 					$scope.apps = apps
 					async.eachSeries apps, (app, next) ->
 						AppService.get app.key

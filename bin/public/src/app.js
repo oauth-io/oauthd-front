@@ -582,8 +582,19 @@ module.exports = function(app) {
 },{}],11:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('PluginShowCtrl', [
-    '$state', '$scope', 'PluginService', function($state, $scope, PluginService) {
-      return $scope.hello = 'test';
+    '$state', '$scope', '$stateParams', 'PluginService', function($state, $scope, $stateParams, PluginService) {
+      if (!$stateParams.plugin || $stateParams.plugin === "") {
+        $state.go('home');
+      }
+      $scope.pluginName = $stateParams.plugin;
+      console.log("$scope.plugins", $scope.plugins);
+      return PluginService.get($stateParams.plugin).then(function(plugin) {
+        return console.log("plugin", plugin);
+      }).fail(function(e) {
+        return console.log(e);
+      })["finally"](function() {
+        return $scope.$apply();
+      });
     }
   ]);
 };
