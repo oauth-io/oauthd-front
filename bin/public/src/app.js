@@ -49,6 +49,12 @@ app = angular.module("oauthd", ["ui.router"]).config([
       templateUrl: '/templates/app-keyset.html',
       controller: 'AppKeysetCtrl'
     });
+    $stateProvider.state('dashboard.plugins', {
+      url: 'plugins/:plugin',
+      templateUrl: '/templates/plugins/show.html',
+      controller: 'PluginShowCtrl'
+    });
+    $urlRouterProvider.when("/", "/home");
     $urlRouterProvider.when("", "/home");
     $urlRouterProvider.when("/apps", "/apps/all");
     $urlRouterProvider.otherwise('/login');
@@ -90,6 +96,8 @@ require('./controllers/Apps/AppKeysetCtrl')(app);
 
 require('./controllers/Apps/AppProviderListCtrl')(app);
 
+require('./controllers/Plugins/PluginShowCtrl')(app);
+
 app.run([
   "$rootScope", "UserService", function($rootScope, UserService) {
     window.scope = $rootScope;
@@ -124,7 +132,7 @@ app.run([
   }
 ]);
 
-},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppsIndexCtrl":6,"./controllers/AppsCtrl":7,"./controllers/DashboardCtrl":8,"./controllers/HomeCtrl":9,"./controllers/LoginCtrl":10,"./directives/DomainsDir":11,"./directives/KeysetDir":12,"./filters/filters":13,"./services/AppService":14,"./services/KeysetService":15,"./services/PluginService":16,"./services/ProviderService":17,"./services/UserService":18}],2:[function(require,module,exports){
+},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppsIndexCtrl":6,"./controllers/AppsCtrl":7,"./controllers/DashboardCtrl":8,"./controllers/HomeCtrl":9,"./controllers/LoginCtrl":10,"./controllers/Plugins/PluginShowCtrl":11,"./directives/DomainsDir":12,"./directives/KeysetDir":13,"./filters/filters":14,"./services/AppService":15,"./services/KeysetService":16,"./services/PluginService":17,"./services/ProviderService":18,"./services/UserService":19}],2:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppCreateCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
@@ -391,7 +399,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":20}],6:[function(require,module,exports){
+},{"async":21}],6:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -438,7 +446,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":20}],7:[function(require,module,exports){
+},{"async":21}],7:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppsCtrl', [
     '$state', '$scope', '$rootScope', '$location', function($state, $scope, $rootScope, $location, UserService) {
@@ -469,17 +477,23 @@ async = require('async');
 
 module.exports = function(app) {
   return app.controller('DashboardCtrl', [
-    '$state', '$scope', '$rootScope', '$location', 'UserService', 'AppService', function($state, $scope, $rootScope, $location, UserService, AppService) {
+    '$state', '$scope', '$rootScope', '$location', 'UserService', 'AppService', 'PluginService', function($state, $scope, $rootScope, $location, UserService, AppService, PluginService) {
       var _ref;
       if (($rootScope.accessToken == null) || ((_ref = $rootScope.loginData) != null ? _ref.expires : void 0) < new Date().getTime()) {
         $state.go('login');
       }
+      PluginService.getAll().then(function(plugins) {
+        $scope.plugins = plugins;
+        return $scope.$apply();
+      }).fail(function(e) {
+        return console.log(e);
+      });
       return $scope.state = $state;
     }
   ]);
 };
 
-},{"async":20}],9:[function(require,module,exports){
+},{"async":21}],9:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -526,16 +540,15 @@ module.exports = function(app) {
         return $scope.$apply();
       });
       return PluginService.getAll().then(function(plugins) {
-        var plugin, _i, _len;
-        console.log("plugins", plugins);
+        var plugin, _i, _len, _results;
         $scope.plugins = [];
+        _results = [];
         for (_i = 0, _len = plugins.length; _i < _len; _i++) {
           plugin = plugins[_i];
-          console.log("plugin", plugin);
           plugin.url = "/oauthd/plugins/" + plugin.name;
-          $scope.plugins.push(plugin);
+          _results.push($scope.plugins.push(plugin));
         }
-        return console.log("$scope.plugins", $scope.plugins);
+        return _results;
       }).fail(function(e) {
         return console.log(e);
       })["finally"](function() {
@@ -545,7 +558,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":20}],10:[function(require,module,exports){
+},{"async":21}],10:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('LoginCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', function($state, $scope, $rootScope, $location, UserService) {
@@ -567,6 +580,15 @@ module.exports = function(app) {
 };
 
 },{}],11:[function(require,module,exports){
+module.exports = function(app) {
+  return app.controller('PluginShowCtrl', [
+    '$state', '$scope', 'PluginService', function($state, $scope, PluginService) {
+      return $scope.hello = 'test';
+    }
+  ]);
+};
+
+},{}],12:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('domains', [
     "$rootScope", function($rootScope) {
@@ -650,7 +672,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('keyseteditor', [
     '$rootScope', 'ProviderService', 'KeysetService', function($rootScope, ProviderService, KeysetService) {
@@ -802,7 +824,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function(app) {
   app.filter('capitalize', function() {
     return function(str) {
@@ -830,7 +852,7 @@ module.exports = function(app) {
   });
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -956,7 +978,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],15:[function(require,module,exports){
+},{"../utilities/apiCaller":20,"q":23}],16:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1010,7 +1032,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],16:[function(require,module,exports){
+},{"../utilities/apiCaller":20,"q":23}],17:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1047,7 +1069,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],17:[function(require,module,exports){
+},{"../utilities/apiCaller":20,"q":23}],18:[function(require,module,exports){
 var Q;
 
 Q = require("q");
@@ -1112,7 +1134,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],18:[function(require,module,exports){
+},{"../utilities/apiCaller":20,"q":23}],19:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1161,7 +1183,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],19:[function(require,module,exports){
+},{"../utilities/apiCaller":20,"q":23}],20:[function(require,module,exports){
 module.exports = function($http, $rootScope) {
   return function(url, success, error, opts) {
     var req;
@@ -1195,7 +1217,7 @@ module.exports = function($http, $rootScope) {
   };
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -2322,7 +2344,7 @@ module.exports = function($http, $rootScope) {
 }());
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":21}],21:[function(require,module,exports){
+},{"JkpR2F":22}],22:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2387,7 +2409,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -4295,4 +4317,4 @@ return Q;
 });
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":21}]},{},[1]);
+},{"JkpR2F":22}]},{},[1]);

@@ -51,8 +51,14 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 			templateUrl: '/templates/app-keyset.html'
 			controller: 'AppKeysetCtrl'
 
+		$stateProvider.state 'dashboard.plugins',
+			url: 'plugins/:plugin'
+			templateUrl: '/templates/plugins/show.html'
+			controller: 'PluginShowCtrl'
+
 		
 
+		$urlRouterProvider.when "/", "/home"
 		$urlRouterProvider.when "", "/home"
 		$urlRouterProvider.when "/apps", "/apps/all"
 
@@ -80,6 +86,8 @@ require('./controllers/Apps/AppCreateCtrl') app
 require('./controllers/Apps/AppsIndexCtrl') app
 require('./controllers/Apps/AppKeysetCtrl') app
 require('./controllers/Apps/AppProviderListCtrl') app
+
+require('./controllers/Plugins/PluginShowCtrl') app
 
 app.run(["$rootScope", "UserService",
 	($rootScope, UserService) ->
