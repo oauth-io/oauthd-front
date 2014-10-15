@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var app;
 
 app = angular.module("oauthd", ["ui.router"]).config([
@@ -1114,7 +1114,6 @@ module.exports = function(app) {
 };
 
 },{"../utilities/apiCaller":19,"q":22}],18:[function(require,module,exports){
-(function (process){
 var Q;
 
 Q = require('q');
@@ -1129,10 +1128,9 @@ module.exports = function(app) {
           var authorization, defer;
           defer = Q.defer();
           authorization = window.btoa((user != null ? user.email : void 0) + ':' + (user != null ? user.pass : void 0));
-          console.log(user.email, user.pass);
           $http({
             method: 'POST',
-            url: process.env.host + '/signin',
+            url: '/signin',
             data: {
               name: user.email,
               pass: user.pass
@@ -1164,8 +1162,7 @@ module.exports = function(app) {
   ]);
 };
 
-}).call(this,require('_process'))
-},{"../utilities/apiCaller":19,"_process":21,"q":22}],19:[function(require,module,exports){
+},{"../utilities/apiCaller":19,"q":22}],19:[function(require,module,exports){
 module.exports = function($http, $rootScope) {
   return function(url, success, error, opts) {
     var req;
@@ -2325,8 +2322,8 @@ module.exports = function($http, $rootScope) {
 
 }());
 
-}).call(this,require('_process'))
-},{"_process":21}],21:[function(require,module,exports){
+}).call(this,require("JkpR2F"))
+},{"JkpR2F":21}],21:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -4298,5 +4295,5 @@ return Q;
 
 });
 
-}).call(this,require('_process'))
-},{"_process":21}]},{},[1]);
+}).call(this,require("JkpR2F"))
+},{"JkpR2F":21}]},{},[1]);
