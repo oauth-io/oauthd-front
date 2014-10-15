@@ -586,10 +586,11 @@ module.exports = function(app) {
       if (!$stateParams.plugin || $stateParams.plugin === "") {
         $state.go('home');
       }
-      $scope.pluginName = $stateParams.plugin;
-      console.log("$scope.plugins", $scope.plugins);
       return PluginService.get($stateParams.plugin).then(function(plugin) {
-        return console.log("plugin", plugin);
+        console.log("plugin", plugin);
+        plugin.url = "/oauthd/plugins/" + plugin.name;
+        $scope.plugin = plugin;
+        return console.log("$scope.plugin", $scope.plugin);
       }).fail(function(e) {
         return console.log(e);
       })["finally"](function() {
