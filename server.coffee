@@ -6,6 +6,10 @@ module.exports = (env) ->
 	exp = {}
 	exp.setup = (callback) ->
 		env.server.get /^(\/.*)/, (req, res, next) ->
+			if req.params[0] == '/'
+				res.setHeader 'Location', '/home'
+				res.send 302
+
 			fs.stat __dirname + '/public' + req.params[0], (err, stat) ->
 				if stat?.isFile()
 					next()

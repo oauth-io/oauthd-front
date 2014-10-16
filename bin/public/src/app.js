@@ -587,10 +587,12 @@ module.exports = function(app) {
         $state.go('home');
       }
       return PluginService.get($stateParams.plugin).then(function(plugin) {
-        plugin.url = "/oauthd/plugins/" + plugin.name;
+        if (plugin.interface_enabled) {
+          plugin.url = "/plugins/" + plugin.name + '/index.html';
+        }
         return $scope.plugin = plugin;
       }).fail(function(e) {
-        return console.log(e);
+        return console.log('An error occured', e);
       })["finally"](function() {
         return $scope.$apply();
       });
