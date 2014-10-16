@@ -1,7 +1,7 @@
 
 
 
-app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
+app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
 	($stateProvider, $urlRouterProvider, $locationProvider) ->
 		
 
@@ -85,6 +85,7 @@ require('./controllers/Apps/AppShowCtrl') app
 require('./controllers/Apps/AppCreateCtrl') app
 require('./controllers/Apps/AppsIndexCtrl') app
 require('./controllers/Apps/AppKeysetCtrl') app
+require('./controllers/Apps/AppTryModalCtrl') app
 require('./controllers/Apps/AppProviderListCtrl') app
 
 require('./controllers/Plugins/PluginShowCtrl') app

@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var app;
 
-app = angular.module("oauthd", ["ui.router"]).config([
+app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config([
   "$stateProvider", "$urlRouterProvider", "$locationProvider", function($stateProvider, $urlRouterProvider, $locationProvider) {
     $stateProvider.state('login', {
       url: '/login',
@@ -94,6 +94,8 @@ require('./controllers/Apps/AppsIndexCtrl')(app);
 
 require('./controllers/Apps/AppKeysetCtrl')(app);
 
+require('./controllers/Apps/AppTryModalCtrl')(app);
+
 require('./controllers/Apps/AppProviderListCtrl')(app);
 
 require('./controllers/Plugins/PluginShowCtrl')(app);
@@ -132,7 +134,7 @@ app.run([
   }
 ]);
 
-},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppsIndexCtrl":6,"./controllers/AppsCtrl":7,"./controllers/DashboardCtrl":8,"./controllers/HomeCtrl":9,"./controllers/LoginCtrl":10,"./controllers/Plugins/PluginShowCtrl":11,"./directives/DomainsDir":12,"./directives/KeysetDir":13,"./filters/filters":14,"./services/AppService":15,"./services/KeysetService":16,"./services/PluginService":17,"./services/ProviderService":18,"./services/UserService":19}],2:[function(require,module,exports){
+},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppTryModalCtrl":6,"./controllers/Apps/AppsIndexCtrl":7,"./controllers/AppsCtrl":8,"./controllers/DashboardCtrl":9,"./controllers/HomeCtrl":10,"./controllers/LoginCtrl":11,"./controllers/Plugins/PluginShowCtrl":12,"./directives/DomainsDir":13,"./directives/KeysetDir":14,"./filters/filters":15,"./services/AppService":16,"./services/KeysetService":17,"./services/PluginService":18,"./services/ProviderService":19,"./services/UserService":20}],2:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppCreateCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
@@ -263,7 +265,7 @@ async = require('async');
 
 module.exports = function(app) {
   return app.controller('AppShowCtrl', [
-    '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
+    '$state', '$scope', '$rootScope', '$location', '$modal', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, $modal, UserService, $stateParams, AppService) {
       var timeout, timeoute;
       $scope.domains_control = {};
       $scope.error = void 0;
@@ -390,16 +392,110 @@ module.exports = function(app) {
           }, 3000);
         }
       });
-      return $scope.domains_control.change = function() {
+      $scope.domains_control.change = function() {
         $scope.changed = true;
         $scope.appModified(true);
         return $scope.$apply();
+      };
+      return $scope.tryAuth = function(provider, key) {
+        var params, type, _ref;
+        console.log("tryAuth provider", provider);
+        console.log("tryAuth key", key);
+        OAuth.initialize(key);
+        type = 'client';
+        if (((_ref = $scope.app.backend) != null ? _ref.name : void 0) === 'firebase') {
+          type = 'baas';
+        }
+        if ($scope.app.backend && $scope.app.backend.name !== 'firebase') {
+          type = 'server';
+        }
+        params = {};
+        if (type === 'server') {
+          params.state = 'azerty';
+        }
+        return OAuth.popup(provider, params, function(err, res) {
+          var instance;
+          if (err) {
+            instance = $modal.open({
+              templateUrl: '/templates/dashboard/modals/try-error.html',
+              controller: 'AppTryModalCtrl',
+              resolve: {
+                success: function() {
+                  return res;
+                },
+                err: function() {
+                  return err;
+                },
+                provider: function() {
+                  return provider;
+                },
+                key: function() {
+                  return key;
+                },
+                type: function() {
+                  return type;
+                },
+                backend: function() {
+                  var _ref1;
+                  return (_ref1 = $scope.app.backend) != null ? _ref1.name : void 0;
+                }
+              }
+            });
+            console.log(err);
+            return false;
+          }
+          console.log(res);
+          return instance = $modal.open({
+            templateUrl: '/templates/dashboard/modals/try-success.html',
+            controller: 'AppTryModalCtrl',
+            resolve: {
+              success: function() {
+                return res;
+              },
+              err: function() {
+                return err;
+              },
+              provider: function() {
+                return provider;
+              },
+              key: function() {
+                return key;
+              },
+              type: function() {
+                return type;
+              },
+              backend: function() {
+                var _ref1;
+                return (_ref1 = $scope.app.backend) != null ? _ref1.name : void 0;
+              }
+            }
+          });
+        });
       };
     }
   ]);
 };
 
-},{"async":21}],6:[function(require,module,exports){
+},{"async":22}],6:[function(require,module,exports){
+module.exports = function(app) {
+  return app.controller('AppTryModalCtrl', [
+    '$scope', '$rootScope', '$modalInstance', 'success', 'err', 'provider', 'key', 'type', 'backend', function($scope, $rootScope, $modalInstance, success, err, provider, key, type, backend) {
+      console.log("AppTryModalCtrl");
+      $scope.success = success;
+      $scope.err = err;
+      $scope.provider = provider;
+      $scope.key = key;
+      $scope.type = type;
+      $scope.backend = backend;
+      console.log(success, err, type);
+      return $scope.close = function() {
+        return $modalInstance.dismiss();
+      };
+    }
+  ]);
+};
+
+},{}],7:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -446,7 +542,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":21}],7:[function(require,module,exports){
+},{"async":22}],8:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppsCtrl', [
     '$state', '$scope', '$rootScope', '$location', function($state, $scope, $rootScope, $location, UserService) {
@@ -470,7 +566,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -493,7 +589,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":21}],9:[function(require,module,exports){
+},{"async":22}],10:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -558,7 +654,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":21}],10:[function(require,module,exports){
+},{"async":22}],11:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('LoginCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', function($state, $scope, $rootScope, $location, UserService) {
@@ -579,7 +675,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('PluginShowCtrl', [
     '$state', '$scope', '$stateParams', 'PluginService', function($state, $scope, $stateParams, PluginService) {
@@ -598,7 +694,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('domains', [
     "$rootScope", function($rootScope) {
@@ -682,7 +778,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('keyseteditor', [
     '$rootScope', 'ProviderService', 'KeysetService', function($rootScope, ProviderService, KeysetService) {
@@ -834,7 +930,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function(app) {
   app.filter('capitalize', function() {
     return function(str) {
@@ -862,7 +958,7 @@ module.exports = function(app) {
   });
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -988,7 +1084,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":20,"q":23}],16:[function(require,module,exports){
+},{"../utilities/apiCaller":21,"q":24}],17:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1042,7 +1138,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":20,"q":23}],17:[function(require,module,exports){
+},{"../utilities/apiCaller":21,"q":24}],18:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1079,7 +1175,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":20,"q":23}],18:[function(require,module,exports){
+},{"../utilities/apiCaller":21,"q":24}],19:[function(require,module,exports){
 var Q;
 
 Q = require("q");
@@ -1144,7 +1240,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":20,"q":23}],19:[function(require,module,exports){
+},{"../utilities/apiCaller":21,"q":24}],20:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1193,7 +1289,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":20,"q":23}],20:[function(require,module,exports){
+},{"../utilities/apiCaller":21,"q":24}],21:[function(require,module,exports){
 module.exports = function($http, $rootScope) {
   return function(url, success, error, opts) {
     var req;
@@ -1227,7 +1323,7 @@ module.exports = function($http, $rootScope) {
   };
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -2354,7 +2450,7 @@ module.exports = function($http, $rootScope) {
 }());
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":22}],22:[function(require,module,exports){
+},{"JkpR2F":23}],23:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2419,7 +2515,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -4327,4 +4423,4 @@ return Q;
 });
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":22}]},{},[1]);
+},{"JkpR2F":23}]},{},[1]);

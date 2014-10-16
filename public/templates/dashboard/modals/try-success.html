@@ -1,0 +1,75 @@
+<div class="modal-header">
+	<button style="position:relative; top: 9px" type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+
+	<h3 class="modal-title"><i class="fa fa-check text-success"></i> Successfully connected with {{provider}}</h3>
+</div>
+
+<div class="modal-body">
+	<div ng-show="type == 'server'">
+		<p>Generate a state from your backend</p>
+		<pre ng-show="backend == 'php'">&lt;?php
+$oauth = new OAuth();
+$oauth->initialize('{{key}}', 'your_secret');
+$state = $oauth->generateStateToken();</pre>
+		<pre ng-show="backend == 'node'">var OAuth = require('oauthio');
+OAuth.initialize('{{key}}', 'your_app_secret');
+app.get('/oauth/state_token', function (req, res) {
+    res.send(200, {
+        token: OAuth.generateStateToken(req.session)
+    });
+});
+</pre>
+		<p ng-show="backend == 'others'">The state is a random string stored in the session for check the integrity of the user.</p>
+		<p>Then give this state to the view</p>
+	</div>
+	<div ng-hide="type == 'server'">
+		<pre>OAuth.initialize('{{key}}')
+OAuth.popup('{{provider}}').done(function(result) {
+    console.log(result)
+    // do some stuff with result
+})</pre>
+	</div>
+	<div ng-show="type == 'server'">
+
+		<pre>OAuth.initialize('{{key}}')
+OAuth.popup('{{provider}}', {
+    state: stateFromServer
+}).done(function(result) {
+    console.log(result)
+})</pre>
+	</div>
+	<p>The console print:</p>
+	<pre>{{success|json}}</pre>
+	
+	<div ng-show="type == 'server'">
+		<p>Then you have to send this code to the backend to exchange it for an access token</p>
+		<div ng-show="backend == 'php'">
+			<pre>&lt;?php
+$request_object = $oauth->auth('the_provider', array(
+    'code': $code
+));</pre>
+			<p>You can now make simple HTTP calls using these functions: <code>$request_object->get($url, $params)</code>, <code>$request_object->post($url, $params)</code>, <code>$request_object->put($url, $params)</code>, <code>$request_object->delete($url, $params)</code>, <code>$request_object->patch($url, $params)</code></p>
+			<p>Or get the user authorized in a unified way using <code>$request_object->me()</code></p>
+		</div>
+		<div ng-show="backend == 'node'">
+			<pre ng-show="backend == 'node'">//node.js
+OAuth.auth('{{provider}}', {
+	code: code //cf result.code client side
+})</pre>
+			<p>You can now make simple HTTP calls using these functions: <code>request_object.get(url, params)</code>, <code>request_object.post(url, params)</code>, <code>request_object.put(url, params)</code>, <code>request_object.delete(url, params)</code>, <code>request_object.patch(url, params)</code></p>
+			<p>Or get the user authorized in a unified way using <code>request_object.me()</code></p>
+		</div>
+		<pre ng-show="backend == 'others'"></pre>
+			
+	</div>
+	<div ng-hide="type == 'server'">
+		<p><code>result</code> contains also additional methods to ease your API calls</p>
+		<p><code>me()</code> - Retrieve the user connected in a unified form (if the provider support this method)</p>
+		<pre>result.me().done(function(data) {
+    // do something with `data`, e.g. print data.name
+})</pre>
+		<p>You can now make simple HTTP calls using these functions: <code>get(url, settings)</code>, <code>post(url, settings)</code>, <code>put(url, settings)</code>, <code>delete(url, settings)</code>, <code>patch(url, settings)</code></p>
+		<p>These methods take the same parameter than <a href="http://api.jquery.com/jquery.ajax/">jQuery.ajax()</a>. It injects all authorization parameters (access token, signature, nonce, timestamp etc...) for you and proxy your API calls if needed.</p>
+	</div>
+	<a ng-href="/dashboard/app/{{key}}/quick-install" ng-click="close()" class="btn btn-success">Quick install</button>
+</div>

@@ -1,8 +1,8 @@
 async = require 'async'
 
 module.exports = (app) ->
-	app.controller('AppShowCtrl', ['$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', 
-		($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) ->
+	app.controller('AppShowCtrl', ['$state', '$scope', '$rootScope', '$location', '$modal', 'UserService', '$stateParams', 'AppService', 
+		($state, $scope, $rootScope, $location, $modal, UserService, $stateParams, AppService) ->
 			$scope.domains_control = {}
 			$scope.error = undefined
 			$scope.setProvider undefined
@@ -118,5 +118,43 @@ module.exports = (app) ->
 				$scope.changed = true
 				$scope.appModified true
 				$scope.$apply()
+
+			$scope.tryAuth = (provider, key) ->
+				console.log "tryAuth provider", provider
+				console.log "tryAuth key", key
+				OAuth.initialize key
+
+				type = 'client'
+				type = 'baas' if $scope.app.backend?.name == 'firebase'
+				type = 'server' if $scope.app.backend && $scope.app.backend.name != 'firebase'
+
+				params = {}
+				if type == 'server'
+					params.state = 'azerty'
+				OAuth.popup provider, params, (err, res) ->
+					if err
+						instance = $modal.open
+							templateUrl: '/templates/dashboard/modals/try-error.html'
+							controller: 'AppTryModalCtrl'
+							resolve:
+								success: -> return res
+								err: -> return err
+								provider: -> return provider
+								key: -> return key
+								type: -> return type
+								backend: -> return $scope.app.backend?.name
+						console.log err
+						return false
+					console.log res
+					instance = $modal.open
+						templateUrl: '/templates/dashboard/modals/try-success.html'
+						controller: 'AppTryModalCtrl'
+						resolve:
+							success: -> return res
+							err: -> return err
+							provider: -> return provider
+							key: -> return key
+							type: -> return type
+							backend: -> return $scope.app.backend?.name
 			
 	])	

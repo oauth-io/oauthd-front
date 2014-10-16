@@ -1,0 +1,9 @@
+<div class="modal-header">
+	<button style="position:relative; top: 9px" type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+
+	<h3 class="modal-title"><i class="fa fa-check text-success"></i> Connection failed with {{provider}}</h3>
+</div>
+<div class="modal-body">
+	<p class="alert alert-danger">We received an error while we were trying to authorize you. It can come from your API Keys or your provider app settings.</p>
+	<pre>{{err|json}}</pre>
+</div>
