@@ -5,10 +5,8 @@ module.exports = (app) ->
 				$state.go 'home'
 			PluginService.get($stateParams.plugin)
 				.then (plugin) ->
-					console.log "plugin", plugin
 					plugin.url = "/oauthd/plugins/" + plugin.name
 					$scope.plugin = plugin
-					console.log "$scope.plugin", $scope.plugin
 				.fail (e) ->
 					console.log e
 				.finally () ->

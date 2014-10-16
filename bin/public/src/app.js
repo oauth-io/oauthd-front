@@ -587,10 +587,8 @@ module.exports = function(app) {
         $state.go('home');
       }
       return PluginService.get($stateParams.plugin).then(function(plugin) {
-        console.log("plugin", plugin);
         plugin.url = "/oauthd/plugins/" + plugin.name;
-        $scope.plugin = plugin;
-        return console.log("$scope.plugin", $scope.plugin);
+        return $scope.plugin = plugin;
       }).fail(function(e) {
         return console.log(e);
       })["finally"](function() {
