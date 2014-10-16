@@ -5,7 +5,7 @@ fs = require 'fs'
 module.exports = (env) ->
 	exp = {}
 	exp.setup = (callback) ->
-		@server.get /^(\/.*)/, (req, res, next) ->
+		env.server.get /^(\/.*)/, (req, res, next) ->
 			fs.stat __dirname + '/public' + req.params[0], (err, stat) ->
 				if stat?.isFile()
 					next()
