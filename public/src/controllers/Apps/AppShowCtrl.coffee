@@ -120,8 +120,7 @@ module.exports = (app) ->
 				$scope.$apply()
 
 			$scope.tryAuth = (provider, key) ->
-				console.log "tryAuth provider", provider
-				console.log "tryAuth key", key
+				OAuth.setOAuthdURL window.location.origin
 				OAuth.initialize key
 
 				type = 'client'

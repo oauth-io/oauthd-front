@@ -399,8 +399,7 @@ module.exports = function(app) {
       };
       return $scope.tryAuth = function(provider, key) {
         var params, type, _ref;
-        console.log("tryAuth provider", provider);
-        console.log("tryAuth key", key);
+        OAuth.setOAuthdURL(window.location.origin);
         OAuth.initialize(key);
         type = 'client';
         if (((_ref = $scope.app.backend) != null ? _ref.name : void 0) === 'firebase') {
