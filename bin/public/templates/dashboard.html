@@ -11,7 +11,7 @@
 		Plugins
 	</div>
 	<div class="section">
-		<a ui-sref="dashboard.plugins({ plugin: plugin.name })" ng-repeat="plugin in plugins" class="button">{{ plugin.name | capitalize }}</a>
+		<a ui-sref="dashboard.plugins({ plugin: plugin.name })" ng-repeat="plugin in plugins" ng-if="plugin.type != 'global-interface'" class="button">{{ plugin.name | capitalize }}</a>
 		<!-- <a ui-sref="dashboard.home" class="button">Statistics</a>
 		<a ui-sref="dashboard.apps" class="button">Unified</a> -->
 	</div>
