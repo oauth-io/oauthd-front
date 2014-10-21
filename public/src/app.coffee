@@ -76,6 +76,7 @@ require('./services/KeysetService') app
 require('./services/PluginService') app
 require('./services/ProviderService') app
 require('./services/UserService') app
+require('./services/ConfigService') app
 
 require('./controllers/DashboardCtrl') app
 require('./controllers/HomeCtrl') app
