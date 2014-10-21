@@ -633,7 +633,7 @@ module.exports = function(app) {
             return $scope.$apply();
           });
         }).fail(function(e) {
-          return console.log(e);
+          return console.log("HomeCtrl getAllApps error ", e);
         })["finally"](function() {
           $scope.loadingApps = false;
           return $scope.$apply();
@@ -657,7 +657,7 @@ module.exports = function(app) {
         return ConfigService.getConfig().then(function(config) {
           return $scope.config = config;
         }).fail(function(e) {
-          return console.log("HomeCtrl config e", e);
+          return console.log("HomeCtrl getConfig error", e);
         })["finally"](function() {
           $scope.loadingConfig = false;
           return $scope.$apply();

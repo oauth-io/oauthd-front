@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="apps_container col-md-12">
-            <h3>Apps</h3>
+            <h3><a ui-sref="dashboard.apps.all">Apps</a></h3>
             <div>
                 <div class="spinner-round loadingAppsSpinner" ng-show="loadingApps">
                     <div class="double-bounce1"></div>
@@ -28,8 +28,21 @@
             <div ng-show="!loadingApps">
         	    <div class="usage">You have <strong>{{ apps.length }} app<span ng-show="apps.length > 1">s</span></strong>, and use <strong>{{ providers | count }} provider<span ng-show="count(providers) > 1">s</span></strong>.
         	        <br>
-        	        <a ui-sref="dashboard.apps.all">Access your app list</a>
         	    </div>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Providers</th>
+                    </tr>
+                    <tr ng-repeat="app in apps">
+                        <td><a ui-sref="dashboard.apps.show({ key: app.key })">{{app.name}}</a></td>
+                        <td>{{app.date | date:"MM/dd/yyyy 'at' h:mma"}}</td>
+                        <td>
+                            <span ng-repeat="keyset in app.keysets"><span ng-hide="$first">, </span>{{keyset}}</span>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -41,10 +54,10 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Version</th>
-                <th>Expose Front</th>
+                <th>Expose an interface</th>
             </tr>
             <tr ng-repeat="plugin in plugins">
-                <td>{{plugin.name}}</td>
+                <td><span ng-show="!plugin.interface_enabled">{{plugin.name}}</span><a ng-show="plugin.interface_enabled" ui-sref="dashboard.plugins({ plugin: plugin.name })">{{plugin.name}}</a></td>
                 <td>{{plugin.description}}</td>
                 <td>{{plugin.version}}</td>
                 <td><span ng-show="plugin.interface_enabled">Yes</span><span ng-show="!plugin.interface_enabled">No</span></td>

@@ -31,7 +31,7 @@ module.exports = (app) ->
 						, (err) ->
 							$scope.$apply()
 					.fail (e) ->
-						console.log e
+						console.log "HomeCtrl getAllApps error ", e
 					.finally () ->
 						$scope.loadingApps = false
 						$scope.$apply()
@@ -52,7 +52,7 @@ module.exports = (app) ->
 					.then (config) ->
 						$scope.config = config
 					.fail (e) ->
-						console.log "HomeCtrl config e", e
+						console.log "HomeCtrl getConfig error", e
 					.finally () ->
 						$scope.loadingConfig = false
 						$scope.$apply()
