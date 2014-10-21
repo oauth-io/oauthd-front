@@ -657,17 +657,17 @@ module.exports = function(app) {
 module.exports = function(app) {
   return app.controller('LoginCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', function($state, $scope, $rootScope, $location, UserService) {
-      var login;
-      $scope.error = void 0;
-      $scope.user = {};
-      $('#emailInput').focus();
+      var initCtrl, login;
+      initCtrl = function() {
+        $scope.error = void 0;
+        $scope.user = {};
+        return $('#emailInput').focus();
+      };
       login = function(cb) {
-        console.log("$scope.user", $scope.user);
         return UserService.login({
           email: $scope.user.email,
           pass: $scope.user.pass
         }).then(function(user) {
-          console.log("login success user", user);
           $state.go('dashboard');
         }).fail(function(e) {
           $scope.error = e;
@@ -676,8 +676,7 @@ module.exports = function(app) {
           return cb(null);
         });
       };
-      return $scope.submit = function(form) {
-        console.log("form", form);
+      $scope.submit = function(form) {
         if (form.$name === "loginForm") {
           $scope.loginSubmitted = true;
         }
@@ -685,10 +684,10 @@ module.exports = function(app) {
           return;
         }
         return login(function(cb) {
-          console.log("IN RETURN CB cb", cb);
           return $scope.loginSubmitted = false;
         });
       };
+      return initCtrl();
     }
   ]);
 };

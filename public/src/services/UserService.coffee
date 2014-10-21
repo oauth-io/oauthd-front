@@ -8,7 +8,6 @@ module.exports = (app) ->
 				login: (user) ->
 					defer = Q.defer()
 					authorization = window.btoa(user?.email + ':' + user?.pass)
-					console.log "userService user", user
 					$http({
 						method: 'POST',
 						url: '/signin',
