@@ -3,16 +3,16 @@
     <form role="form" novalidate name="loginForm" class="login-form">
         <h4>Please log in</h4>
         <div class="form-group">
-            <label for="email">Email: </label>
+            <label for="emailInput">Email: </label>
             <h6 class="warning-header"><span class="label label-danger" ng-show="loginSubmitted && loginForm.email.$error.required">Required!</span></h6>
             <h6 class="warning-header"><span class="label label-warning" ng-show="loginSubmitted && loginForm.email.$error.email">Invalid email!</span></h6>
             <input id="emailInput" class="form-control" name="email" type="email" required placeholder="Enter your email" ng-model="user.email" ng-class="{'input-warning': loginForm.email.$error.email, 'input-error': loginSubmitted && loginForm.email.$error.required || user.email == 'null'}">
         </div>
         <div class="form-group">
-            <label>Password: </label>
+            <label for="passwordInput">Password: </label>
             <h6 class="warning-header"><span class="label label-danger" ng-show="loginSubmitted && loginForm.password.$error.required">Required!</span></h6>
             <h6 class="warning-header"><span class="label label-warning" data-ng-show="loginSubmitted && loginForm.password.$error.minlength">Password must be at least 6 characters long.</span></h6>
-            <input class="form-control" name="password" type="password" required placeholder="Enter your password" ng-model="user.pass" ng-minlength="6" ng-class="{'input-warning': !loginSubmitted && loginForm.password.$error.required, 'input-error': loginSubmitted && loginForm.password.$error.required || user.pass == 'null'}">
+            <input id="passwordInput" class="form-control" name="password" type="password" required placeholder="Enter your password" ng-model="user.pass" ng-minlength="6" ng-class="{'input-warning': !loginSubmitted && loginForm.password.$error.required, 'input-error': loginSubmitted && loginForm.password.$error.required || user.pass == 'null'}">
         </div>
         <div class="alert alert-danger" ng-show="error && error != ''">{{ error | capitalize }}</div>
         <div class="form-group buttons">

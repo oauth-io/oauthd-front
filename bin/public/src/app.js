@@ -1274,7 +1274,6 @@ module.exports = function(app) {
           var authorization, defer;
           defer = Q.defer();
           authorization = window.btoa((user != null ? user.email : void 0) + ':' + (user != null ? user.pass : void 0));
-          console.log("userService user", user);
           $http({
             method: 'POST',
             url: '/signin',
