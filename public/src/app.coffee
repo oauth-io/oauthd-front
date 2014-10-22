@@ -1,7 +1,7 @@
 
 
 
-app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
+app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
 	($stateProvider, $urlRouterProvider, $locationProvider) ->
 		
 
@@ -51,8 +51,14 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 			templateUrl: '/templates/app-keyset.html'
 			controller: 'AppKeysetCtrl'
 
+		$stateProvider.state 'dashboard.plugins',
+			url: 'plugins/:plugin'
+			templateUrl: '/templates/plugins/show.html'
+			controller: 'PluginShowCtrl'
+
 		
 
+		$urlRouterProvider.when "/", "/home"
 		$urlRouterProvider.when "", "/home"
 		$urlRouterProvider.when "/apps", "/apps/all"
 
@@ -70,6 +76,7 @@ require('./services/KeysetService') app
 require('./services/PluginService') app
 require('./services/ProviderService') app
 require('./services/UserService') app
+require('./services/ConfigService') app
 
 require('./controllers/DashboardCtrl') app
 require('./controllers/HomeCtrl') app
@@ -79,11 +86,13 @@ require('./controllers/Apps/AppShowCtrl') app
 require('./controllers/Apps/AppCreateCtrl') app
 require('./controllers/Apps/AppsIndexCtrl') app
 require('./controllers/Apps/AppKeysetCtrl') app
+require('./controllers/Apps/AppTryModalCtrl') app
 require('./controllers/Apps/AppProviderListCtrl') app
+
+require('./controllers/Plugins/PluginShowCtrl') app
 
 app.run(["$rootScope", "UserService",
 	($rootScope, UserService) ->
-		console.log "Hello test master new version!"
 		window.scope = $rootScope
 		$rootScope.loading = true
 		$rootScope.logged_user = amplify.store('user')

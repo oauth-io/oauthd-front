@@ -8,11 +8,10 @@
 		<a ui-sref="dashboard.apps.all" ng-class="{active: state.current.name.indexOf('dashboard.apps') == 0 }" class="button">Apps</a>
 	</div>
 	<div class="section-header">
-		Plugins
+		Plugins configuration
 	</div>
 	<div class="section">
-		<a ui-sref="dashboard.home" class="button">Statistics</a>
-		<a ui-sref="dashboard.apps" class="button">Unified</a>
+		<a ui-sref="dashboard.plugins({ plugin: plugin.name })" ng-repeat="plugin in plugins" ng-if="plugin.interface_enabled" class="button">{{ plugin.name | capitalize }}</a>
 	</div>
 </div>
 <div class="content">

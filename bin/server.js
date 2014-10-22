@@ -10,7 +10,11 @@ module.exports = function(env) {
   var exp;
   exp = {};
   exp.setup = function(callback) {
-    this.server.get(/^(\/.*)/, function(req, res, next) {
+    env.server.get(/^(\/.*)/, function(req, res, next) {
+      if (req.params[0] === '/') {
+        res.setHeader('Location', '/home');
+        res.send(302);
+      }
       return fs.stat(__dirname + '/public' + req.params[0], function(err, stat) {
         if (stat != null ? stat.isFile() : void 0) {
           next();

@@ -1,7 +1,7 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var app;
 
-app = angular.module("oauthd", ["ui.router"]).config([
+app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config([
   "$stateProvider", "$urlRouterProvider", "$locationProvider", function($stateProvider, $urlRouterProvider, $locationProvider) {
     $stateProvider.state('login', {
       url: '/login',
@@ -49,6 +49,12 @@ app = angular.module("oauthd", ["ui.router"]).config([
       templateUrl: '/templates/app-keyset.html',
       controller: 'AppKeysetCtrl'
     });
+    $stateProvider.state('dashboard.plugins', {
+      url: 'plugins/:plugin',
+      templateUrl: '/templates/plugins/show.html',
+      controller: 'PluginShowCtrl'
+    });
+    $urlRouterProvider.when("/", "/home");
     $urlRouterProvider.when("", "/home");
     $urlRouterProvider.when("/apps", "/apps/all");
     $urlRouterProvider.otherwise('/login');
@@ -72,6 +78,8 @@ require('./services/ProviderService')(app);
 
 require('./services/UserService')(app);
 
+require('./services/ConfigService')(app);
+
 require('./controllers/DashboardCtrl')(app);
 
 require('./controllers/HomeCtrl')(app);
@@ -88,7 +96,11 @@ require('./controllers/Apps/AppsIndexCtrl')(app);
 
 require('./controllers/Apps/AppKeysetCtrl')(app);
 
+require('./controllers/Apps/AppTryModalCtrl')(app);
+
 require('./controllers/Apps/AppProviderListCtrl')(app);
+
+require('./controllers/Plugins/PluginShowCtrl')(app);
 
 app.run([
   "$rootScope", "UserService", function($rootScope, UserService) {
@@ -124,7 +136,7 @@ app.run([
   }
 ]);
 
-},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppsIndexCtrl":6,"./controllers/AppsCtrl":7,"./controllers/DashboardCtrl":8,"./controllers/HomeCtrl":9,"./controllers/LoginCtrl":10,"./directives/DomainsDir":11,"./directives/KeysetDir":12,"./filters/filters":13,"./services/AppService":14,"./services/KeysetService":15,"./services/PluginService":16,"./services/ProviderService":17,"./services/UserService":18}],2:[function(require,module,exports){
+},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppTryModalCtrl":6,"./controllers/Apps/AppsIndexCtrl":7,"./controllers/AppsCtrl":8,"./controllers/DashboardCtrl":9,"./controllers/HomeCtrl":10,"./controllers/LoginCtrl":11,"./controllers/Plugins/PluginShowCtrl":12,"./directives/DomainsDir":13,"./directives/KeysetDir":14,"./filters/filters":15,"./services/AppService":16,"./services/ConfigService":17,"./services/KeysetService":18,"./services/PluginService":19,"./services/ProviderService":20,"./services/UserService":21}],2:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppCreateCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
@@ -255,7 +267,7 @@ async = require('async');
 
 module.exports = function(app) {
   return app.controller('AppShowCtrl', [
-    '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
+    '$state', '$scope', '$rootScope', '$location', '$modal', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, $modal, UserService, $stateParams, AppService) {
       var timeout, timeoute;
       $scope.domains_control = {};
       $scope.error = void 0;
@@ -382,16 +394,109 @@ module.exports = function(app) {
           }, 3000);
         }
       });
-      return $scope.domains_control.change = function() {
+      $scope.domains_control.change = function() {
         $scope.changed = true;
         $scope.appModified(true);
         return $scope.$apply();
+      };
+      return $scope.tryAuth = function(provider, key) {
+        var params, type, _ref;
+        OAuth.setOAuthdURL(window.location.origin);
+        OAuth.initialize(key);
+        type = 'client';
+        if (((_ref = $scope.app.backend) != null ? _ref.name : void 0) === 'firebase') {
+          type = 'baas';
+        }
+        if ($scope.app.backend && $scope.app.backend.name !== 'firebase') {
+          type = 'server';
+        }
+        params = {};
+        if (type === 'server') {
+          params.state = 'azerty';
+        }
+        return OAuth.popup(provider, params, function(err, res) {
+          var instance;
+          if (err) {
+            instance = $modal.open({
+              templateUrl: '/templates/dashboard/modals/try-error.html',
+              controller: 'AppTryModalCtrl',
+              resolve: {
+                success: function() {
+                  return res;
+                },
+                err: function() {
+                  return err;
+                },
+                provider: function() {
+                  return provider;
+                },
+                key: function() {
+                  return key;
+                },
+                type: function() {
+                  return type;
+                },
+                backend: function() {
+                  var _ref1;
+                  return (_ref1 = $scope.app.backend) != null ? _ref1.name : void 0;
+                }
+              }
+            });
+            console.log(err);
+            return false;
+          }
+          console.log(res);
+          return instance = $modal.open({
+            templateUrl: '/templates/dashboard/modals/try-success.html',
+            controller: 'AppTryModalCtrl',
+            resolve: {
+              success: function() {
+                return res;
+              },
+              err: function() {
+                return err;
+              },
+              provider: function() {
+                return provider;
+              },
+              key: function() {
+                return key;
+              },
+              type: function() {
+                return type;
+              },
+              backend: function() {
+                var _ref1;
+                return (_ref1 = $scope.app.backend) != null ? _ref1.name : void 0;
+              }
+            }
+          });
+        });
       };
     }
   ]);
 };
 
-},{"async":20}],6:[function(require,module,exports){
+},{"async":23}],6:[function(require,module,exports){
+module.exports = function(app) {
+  return app.controller('AppTryModalCtrl', [
+    '$scope', '$rootScope', '$modalInstance', 'success', 'err', 'provider', 'key', 'type', 'backend', function($scope, $rootScope, $modalInstance, success, err, provider, key, type, backend) {
+      console.log("AppTryModalCtrl");
+      $scope.success = success;
+      $scope.err = err;
+      $scope.provider = provider;
+      $scope.key = key;
+      $scope.type = type;
+      $scope.backend = backend;
+      console.log(success, err, type);
+      return $scope.close = function() {
+        return $modalInstance.dismiss();
+      };
+    }
+  ]);
+};
+
+},{}],7:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -438,7 +543,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":20}],7:[function(require,module,exports){
+},{"async":23}],8:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppsCtrl', [
     '$state', '$scope', '$rootScope', '$location', function($state, $scope, $rootScope, $location, UserService) {
@@ -462,33 +567,38 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var async;
 
 async = require('async');
 
 module.exports = function(app) {
   return app.controller('DashboardCtrl', [
-    '$state', '$scope', '$rootScope', '$location', 'UserService', 'AppService', function($state, $scope, $rootScope, $location, UserService, AppService) {
+    '$state', '$scope', '$rootScope', '$location', 'UserService', 'AppService', 'PluginService', function($state, $scope, $rootScope, $location, UserService, AppService, PluginService) {
       var _ref;
       if (($rootScope.accessToken == null) || ((_ref = $rootScope.loginData) != null ? _ref.expires : void 0) < new Date().getTime()) {
         $state.go('login');
       }
+      PluginService.getAll().then(function(plugins) {
+        $scope.plugins = plugins;
+        return $scope.$apply();
+      }).fail(function(e) {
+        return console.log(e);
+      });
       return $scope.state = $state;
     }
   ]);
 };
 
-},{"async":20}],9:[function(require,module,exports){
+},{"async":23}],10:[function(require,module,exports){
 var async;
 
 async = require('async');
 
 module.exports = function(app) {
   return app.controller('HomeCtrl', [
-    '$scope', '$state', '$rootScope', '$location', 'UserService', 'AppService', 'PluginService', function($scope, $state, $rootScope, $location, UserService, AppService, PluginService) {
-      $scope.providers = {};
-      $scope.loadingApps = true;
+    '$scope', '$state', '$rootScope', '$location', 'UserService', 'AppService', 'PluginService', 'ConfigService', function($scope, $state, $rootScope, $location, UserService, AppService, PluginService, ConfigService) {
+      var initCtrl;
       $scope.count = function(object) {
         var count, k, v;
         count = 0;
@@ -498,76 +608,127 @@ module.exports = function(app) {
         }
         return count;
       };
-      AppService.all().then(function(apps) {
-        $scope.apps = apps;
-        return async.eachSeries(apps, function(app, next) {
-          return AppService.get(app.key).then(function(app_data) {
-            var j, k, v, _ref;
-            for (j in app_data) {
-              app[j] = app_data[j];
-            }
-            _ref = app_data.keysets;
-            for (k in _ref) {
-              v = _ref[k];
-              $scope.providers[v] = true;
-            }
-            return next();
-          }).fail(function(e) {
-            console.log(e);
-            return next();
+      initCtrl = function() {
+        $scope.providers = {};
+        $scope.loadingApps = true;
+        AppService.all().then(function(apps) {
+          $scope.apps = apps;
+          return async.eachSeries(apps, function(app, next) {
+            return AppService.get(app.key).then(function(app_data) {
+              var j, k, v, _ref;
+              for (j in app_data) {
+                app[j] = app_data[j];
+              }
+              _ref = app_data.keysets;
+              for (k in _ref) {
+                v = _ref[k];
+                $scope.providers[v] = true;
+              }
+              return next();
+            }).fail(function(e) {
+              console.log(e);
+              return next();
+            });
+          }, function(err) {
+            return $scope.$apply();
           });
-        }, function(err) {
+        }).fail(function(e) {
+          return console.log("HomeCtrl getAllApps error ", e);
+        })["finally"](function() {
+          $scope.loadingApps = false;
           return $scope.$apply();
         });
-      }).fail(function(e) {
-        return console.log(e);
-      })["finally"](function() {
-        $scope.loadingApps = false;
-        return $scope.$apply();
-      });
-      return PluginService.getAll().then(function(plugins) {
-        var name, plugin, _i, _len, _results;
-        $scope.plugins = [];
-        _results = [];
-        for (_i = 0, _len = plugins.length; _i < _len; _i++) {
-          name = plugins[_i];
-          plugin = {};
-          plugin.name = name;
-          plugin.url = "/oauthd/plugins/" + name;
-          _results.push($scope.plugins.push(plugin));
-        }
-        return _results;
-      }).fail(function(e) {
-        return console.log(e);
-      })["finally"](function() {
-        return $scope.$apply();
-      });
+        PluginService.getAll().then(function(plugins) {
+          var plugin, _i, _len, _results;
+          $scope.plugins = [];
+          _results = [];
+          for (_i = 0, _len = plugins.length; _i < _len; _i++) {
+            plugin = plugins[_i];
+            plugin.url = "/oauthd/plugins/" + plugin.name;
+            _results.push($scope.plugins.push(plugin));
+          }
+          return _results;
+        }).fail(function(e) {
+          return console.log(e);
+        })["finally"](function() {
+          return $scope.$apply();
+        });
+        $scope.loadingConfig = true;
+        return ConfigService.getConfig().then(function(config) {
+          return $scope.config = config;
+        }).fail(function(e) {
+          return console.log("HomeCtrl getConfig error", e);
+        })["finally"](function() {
+          $scope.loadingConfig = false;
+          return $scope.$apply();
+        });
+      };
+      return initCtrl();
     }
   ]);
 };
 
-},{"async":20}],10:[function(require,module,exports){
+},{"async":23}],11:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('LoginCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', function($state, $scope, $rootScope, $location, UserService) {
-      $scope.error = void 0;
-      $scope.user = {};
-      return $scope.login = function() {
+      var initCtrl, login;
+      initCtrl = function() {
+        $scope.error = void 0;
+        $scope.user = {};
+        return $('#emailInput').focus();
+      };
+      login = function(cb) {
         return UserService.login({
           email: $scope.user.email,
           pass: $scope.user.pass
         }).then(function(user) {
-          console.log(user);
-          return $state.go('dashboard');
+          $state.go('dashboard');
         }).fail(function(e) {
-          $scope.error = e.message;
+          $scope.error = e;
+          $scope.$apply();
+        })["finally"](function() {
+          return cb(null);
         });
       };
+      $scope.submit = function(form) {
+        if (form.$name === "loginForm") {
+          $scope.loginSubmitted = true;
+        }
+        if (form.$invalid) {
+          return;
+        }
+        return login(function(cb) {
+          return $scope.loginSubmitted = false;
+        });
+      };
+      return initCtrl();
     }
   ]);
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+module.exports = function(app) {
+  return app.controller('PluginShowCtrl', [
+    '$state', '$scope', '$stateParams', 'PluginService', function($state, $scope, $stateParams, PluginService) {
+      if (!$stateParams.plugin || $stateParams.plugin === "") {
+        $state.go('home');
+      }
+      return PluginService.get($stateParams.plugin).then(function(plugin) {
+        if (plugin.interface_enabled) {
+          plugin.url = "/plugins/" + plugin.name + '/index.html';
+        }
+        return $scope.plugin = plugin;
+      }).fail(function(e) {
+        return console.log('An error occured', e);
+      })["finally"](function() {
+        return $scope.$apply();
+      });
+    }
+  ]);
+};
+
+},{}],13:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('domains', [
     "$rootScope", function($rootScope) {
@@ -651,7 +812,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('keyseteditor', [
     '$rootScope', 'ProviderService', 'KeysetService', function($rootScope, ProviderService, KeysetService) {
@@ -803,7 +964,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function(app) {
   app.filter('capitalize', function() {
     return function(str) {
@@ -831,7 +992,7 @@ module.exports = function(app) {
   });
 };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -957,7 +1118,34 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],15:[function(require,module,exports){
+},{"../utilities/apiCaller":22,"q":25}],17:[function(require,module,exports){
+var Q;
+
+Q = require('q');
+
+module.exports = function(app) {
+  return app.factory('ConfigService', [
+    '$http', '$rootScope', '$location', function($http, $rootScope, $location) {
+      var api, config_service;
+      api = require('../utilities/apiCaller')($http, $rootScope);
+      config_service = {
+        getConfig: function() {
+          var defer;
+          defer = Q.defer();
+          api("/config", (function(data) {
+            defer.resolve(data.data);
+          }), function(e) {
+            defer.reject(e);
+          });
+          return defer.promise;
+        }
+      };
+      return config_service;
+    }
+  ]);
+};
+
+},{"../utilities/apiCaller":22,"q":25}],18:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1011,7 +1199,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],16:[function(require,module,exports){
+},{"../utilities/apiCaller":22,"q":25}],19:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1048,7 +1236,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],17:[function(require,module,exports){
+},{"../utilities/apiCaller":22,"q":25}],20:[function(require,module,exports){
 var Q;
 
 Q = require("q");
@@ -1113,8 +1301,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":19,"q":22}],18:[function(require,module,exports){
-(function (process){
+},{"../utilities/apiCaller":22,"q":25}],21:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1129,10 +1316,9 @@ module.exports = function(app) {
           var authorization, defer;
           defer = Q.defer();
           authorization = window.btoa((user != null ? user.email : void 0) + ':' + (user != null ? user.pass : void 0));
-          console.log(user.email, user.pass);
           $http({
             method: 'POST',
-            url: process.env.host + '/signin',
+            url: '/signin',
             data: {
               name: user.email,
               pass: user.pass
@@ -1164,8 +1350,7 @@ module.exports = function(app) {
   ]);
 };
 
-}).call(this,require('_process'))
-},{"../utilities/apiCaller":19,"_process":21,"q":22}],19:[function(require,module,exports){
+},{"../utilities/apiCaller":22,"q":25}],22:[function(require,module,exports){
 module.exports = function($http, $rootScope) {
   return function(url, success, error, opts) {
     var req;
@@ -1199,7 +1384,7 @@ module.exports = function($http, $rootScope) {
   };
 };
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -2325,8 +2510,8 @@ module.exports = function($http, $rootScope) {
 
 }());
 
-}).call(this,require('_process'))
-},{"_process":21}],21:[function(require,module,exports){
+}).call(this,require("JkpR2F"))
+},{"JkpR2F":24}],24:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2391,7 +2576,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],22:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -4298,5 +4483,5 @@ return Q;
 
 });
 
-}).call(this,require('_process'))
-},{"_process":21}]},{},[1]);
+}).call(this,require("JkpR2F"))
+},{"JkpR2F":24}]},{},[1]);
