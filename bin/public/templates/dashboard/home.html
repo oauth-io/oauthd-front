@@ -1,23 +1,6 @@
 <div class="home-page">
     <div class="col-md-5">
         <div class="apps_container col-md-12">
-            <h3>Configuration</h3>
-            <div>
-                <div class="spinner-round loadingAppsSpinner" ng-show="loadingConfig">
-                    <div class="double-bounce1"></div>
-                    <div class="double-bounce2"></div>
-                </div>
-            </div>
-            <div ng-show="!loadingConfig">
-                <div>
-                    host_url: {{config.host_url}}
-                </div>
-                <div>
-                    Redis: host {{config.redis.host}}, port {{config.redis.port}}
-                </div>
-            </div>
-        </div>
-        <div class="apps_container col-md-12">
             <h3><a ui-sref="dashboard.apps.all">Apps</a></h3>
             <div>
                 <div class="spinner-round loadingAppsSpinner" ng-show="loadingApps">
@@ -45,8 +28,25 @@
                 </table>
             </div>
         </div>
+        <div class="col-md-12">
+            <h3>Configuration</h3>
+            <div>
+                <div class="spinner-round loadingAppsSpinner" ng-show="loadingConfig">
+                    <div class="double-bounce1"></div>
+                    <div class="double-bounce2"></div>
+                </div>
+            </div>
+            <div ng-show="!loadingConfig">
+                <div>
+                    host_url: {{config.host_url}}
+                </div>
+                <div>
+                    Redis: host {{config.redis.host}}, port {{config.redis.port}}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="plugins_container col-md-5">
+    <div class="plugins_container col-md-6">
         <h3>Plugins</h3>
         You have {{plugins.length || 0}} plugins installed : 
         <table class="table table-striped">
@@ -54,7 +54,7 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Version</th>
-                <th>Expose an interface</th>
+                <th>Front Interface</th>
             </tr>
             <tr ng-repeat="plugin in plugins">
                 <td><span ng-show="!plugin.interface_enabled">{{plugin.name}}</span><a ng-show="plugin.interface_enabled" ui-sref="dashboard.plugins({ plugin: plugin.name })">{{plugin.name}}</a></td>
