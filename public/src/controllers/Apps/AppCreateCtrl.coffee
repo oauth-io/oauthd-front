@@ -3,6 +3,7 @@ module.exports = (app) ->
 		($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) ->
 			$scope.app = {
 			}
+			$scope.setTitle 'Create an app'
 			$scope.domains_control = {}
 
 			$scope.create = () ->

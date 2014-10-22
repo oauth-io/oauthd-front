@@ -10,6 +10,8 @@ module.exports = (app) ->
 
 			$scope.setProvider = (provider) ->
 				$scope.provider_name = provider
+			$scope.setTitle = (title) ->
+				$scope.pagetitle = title
 
 			$scope.clearArianne = () ->
 				$scope.app = undefined

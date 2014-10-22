@@ -2,14 +2,20 @@
 	ul {
 		margin: 0;
 		padding: 0;
-		border-left: 1px black solid;
-		border-top: 1px black solid;
 		li {
 			margin: 0;
-			padding: 20px;
-			border-right: 1px black solid;
-			border-bottom: 1px black solid;
+			
 			list-style: none;
+			> div {
+				padding: 14px;
+				background-color: rgba(255,255,255,0.4);
+				margin-bottom: 10px;
+				&:hover {
+					background-color: rgba(255,255,255,0.7);	
+				}	
+			}
+			
+
 			img {
 				max-width: 24px;
 				max-height: 24px;

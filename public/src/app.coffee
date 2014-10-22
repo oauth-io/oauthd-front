@@ -56,6 +56,10 @@ app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config(["$statePro
 			templateUrl: '/templates/plugins/show.html'
 			controller: 'PluginShowCtrl'
 
+		$stateProvider.state 'dashboard.help',
+			url: 'help'
+			templateUrl: '/templates/help.html'
+			controller: 'HelpCtrl'
 		
 
 		$urlRouterProvider.when "/", "/home"
@@ -70,6 +74,7 @@ app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config(["$statePro
 require('./filters/filters') app
 require('./directives/DomainsDir') app
 require('./directives/KeysetDir') app
+require('./directives/AppThumb') app
 
 require('./services/AppService') app
 require('./services/KeysetService') app
@@ -88,6 +93,7 @@ require('./controllers/Apps/AppsIndexCtrl') app
 require('./controllers/Apps/AppKeysetCtrl') app
 require('./controllers/Apps/AppTryModalCtrl') app
 require('./controllers/Apps/AppProviderListCtrl') app
+require('./controllers/HelpCtrl') app
 
 require('./controllers/Plugins/PluginShowCtrl') app
 

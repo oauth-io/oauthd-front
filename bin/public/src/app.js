@@ -54,6 +54,11 @@ app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config([
       templateUrl: '/templates/plugins/show.html',
       controller: 'PluginShowCtrl'
     });
+    $stateProvider.state('dashboard.help', {
+      url: 'help',
+      templateUrl: '/templates/help.html',
+      controller: 'HelpCtrl'
+    });
     $urlRouterProvider.when("/", "/home");
     $urlRouterProvider.when("", "/home");
     $urlRouterProvider.when("/apps", "/apps/all");
@@ -67,6 +72,8 @@ require('./filters/filters')(app);
 require('./directives/DomainsDir')(app);
 
 require('./directives/KeysetDir')(app);
+
+require('./directives/AppThumb')(app);
 
 require('./services/AppService')(app);
 
@@ -99,6 +106,8 @@ require('./controllers/Apps/AppKeysetCtrl')(app);
 require('./controllers/Apps/AppTryModalCtrl')(app);
 
 require('./controllers/Apps/AppProviderListCtrl')(app);
+
+require('./controllers/HelpCtrl')(app);
 
 require('./controllers/Plugins/PluginShowCtrl')(app);
 
@@ -136,11 +145,12 @@ app.run([
   }
 ]);
 
-},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppTryModalCtrl":6,"./controllers/Apps/AppsIndexCtrl":7,"./controllers/AppsCtrl":8,"./controllers/DashboardCtrl":9,"./controllers/HomeCtrl":10,"./controllers/LoginCtrl":11,"./controllers/Plugins/PluginShowCtrl":12,"./directives/DomainsDir":13,"./directives/KeysetDir":14,"./filters/filters":15,"./services/AppService":16,"./services/ConfigService":17,"./services/KeysetService":18,"./services/PluginService":19,"./services/ProviderService":20,"./services/UserService":21}],2:[function(require,module,exports){
+},{"./controllers/Apps/AppCreateCtrl":2,"./controllers/Apps/AppKeysetCtrl":3,"./controllers/Apps/AppProviderListCtrl":4,"./controllers/Apps/AppShowCtrl":5,"./controllers/Apps/AppTryModalCtrl":6,"./controllers/Apps/AppsIndexCtrl":7,"./controllers/AppsCtrl":8,"./controllers/DashboardCtrl":9,"./controllers/HelpCtrl":10,"./controllers/HomeCtrl":11,"./controllers/LoginCtrl":12,"./controllers/Plugins/PluginShowCtrl":13,"./directives/AppThumb":14,"./directives/DomainsDir":15,"./directives/KeysetDir":16,"./filters/filters":17,"./services/AppService":18,"./services/ConfigService":19,"./services/KeysetService":20,"./services/PluginService":21,"./services/ProviderService":22,"./services/UserService":23}],2:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppCreateCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', function($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) {
       $scope.app = {};
+      $scope.setTitle('Create an app');
       $scope.domains_control = {};
       return $scope.create = function() {
         return AppService.create($scope.app).then(function(app) {
@@ -477,7 +487,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":23}],6:[function(require,module,exports){
+},{"async":25}],6:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppTryModalCtrl', [
     '$scope', '$rootScope', '$modalInstance', 'success', 'err', 'provider', 'key', 'type', 'backend', function($scope, $rootScope, $modalInstance, success, err, provider, key, type, backend) {
@@ -543,7 +553,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":23}],8:[function(require,module,exports){
+},{"async":25}],8:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('AppsCtrl', [
     '$state', '$scope', '$rootScope', '$location', function($state, $scope, $rootScope, $location, UserService) {
@@ -555,6 +565,9 @@ module.exports = function(app) {
       };
       $scope.setProvider = function(provider) {
         return $scope.provider_name = provider;
+      };
+      $scope.setTitle = function(title) {
+        return $scope.pagetitle = title;
       };
       $scope.clearArianne = function() {
         $scope.app = void 0;
@@ -590,7 +603,26 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":23}],10:[function(require,module,exports){
+},{"async":25}],10:[function(require,module,exports){
+var async;
+
+async = require('async');
+
+module.exports = function(app) {
+  return app.controller('HelpCtrl', [
+    '$scope', '$state', '$rootScope', 'ConfigService', function($scope, $state, $rootScope, ConfigService) {
+      return ConfigService.getConfig().then(function(config) {
+        return $scope.config = config;
+      }).fail(function(e) {
+        return console.log("HomeCtrl getConfig error", e);
+      })["finally"](function() {
+        return $scope.$apply();
+      });
+    }
+  ]);
+};
+
+},{"async":25}],11:[function(require,module,exports){
 var async;
 
 async = require('async');
@@ -668,7 +700,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"async":23}],11:[function(require,module,exports){
+},{"async":25}],12:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('LoginCtrl', [
     '$state', '$scope', '$rootScope', '$location', 'UserService', function($state, $scope, $rootScope, $location, UserService) {
@@ -707,7 +739,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(app) {
   return app.controller('PluginShowCtrl', [
     '$state', '$scope', '$stateParams', 'PluginService', function($state, $scope, $stateParams, PluginService) {
@@ -728,7 +760,24 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+module.exports = function(app) {
+  return app.directive('appthumb', [
+    "$rootScope", function($rootScope) {
+      return {
+        restrict: 'AE',
+        templateUrl: '/templates/apps/thumb.html',
+        replace: true,
+        scope: {
+          app: '='
+        },
+        link: function($scope, $element) {}
+      };
+    }
+  ]);
+};
+
+},{}],15:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('domains', [
     "$rootScope", function($rootScope) {
@@ -812,7 +861,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = function(app) {
   return app.directive('keyseteditor', [
     '$rootScope', 'ProviderService', 'KeysetService', function($rootScope, ProviderService, KeysetService) {
@@ -964,7 +1013,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function(app) {
   app.filter('capitalize', function() {
     return function(str) {
@@ -992,7 +1041,7 @@ module.exports = function(app) {
   });
 };
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1118,7 +1167,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],17:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],19:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1145,7 +1194,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],18:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],20:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1199,7 +1248,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],19:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],21:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1236,7 +1285,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],20:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],22:[function(require,module,exports){
 var Q;
 
 Q = require("q");
@@ -1301,7 +1350,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],21:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],23:[function(require,module,exports){
 var Q;
 
 Q = require('q');
@@ -1350,7 +1399,7 @@ module.exports = function(app) {
   ]);
 };
 
-},{"../utilities/apiCaller":22,"q":25}],22:[function(require,module,exports){
+},{"../utilities/apiCaller":24,"q":27}],24:[function(require,module,exports){
 module.exports = function($http, $rootScope) {
   return function(url, success, error, opts) {
     var req;
@@ -1384,7 +1433,7 @@ module.exports = function($http, $rootScope) {
   };
 };
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -2511,7 +2560,7 @@ module.exports = function($http, $rootScope) {
 }());
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":24}],24:[function(require,module,exports){
+},{"JkpR2F":26}],26:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2576,7 +2625,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -4484,4 +4533,4 @@ return Q;
 });
 
 }).call(this,require("JkpR2F"))
-},{"JkpR2F":24}]},{},[1]);
+},{"JkpR2F":26}]},{},[1]);

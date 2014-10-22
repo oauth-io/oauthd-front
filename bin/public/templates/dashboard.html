@@ -5,10 +5,10 @@
 	</div>
 	<div class="section">
 		<a ui-sref="dashboard.home" ng-class="{active: state.current.name == 'dashboard.home' }" class="button">Home</a>
-		<a ui-sref="dashboard.apps.all" ng-class="{active: state.current.name.indexOf('dashboard.apps') == 0 }" class="button">Apps</a>
+		<a ui-sref="dashboard.help" ng-class="{active: state.current.name == 'dashboard.help' }" class="button">Help</a>
 	</div>
-	<div class="section-header">
-		Plugins configuration
+	<div class="section-header" ng-show="plugins.length > 0">
+		Plugins interfaces
 	</div>
 	<div class="section">
 		<a ui-sref="dashboard.plugins({ plugin: plugin.name })" ng-repeat="plugin in plugins" ng-if="plugin.interface_enabled" class="button">{{ plugin.name | capitalize }}</a>

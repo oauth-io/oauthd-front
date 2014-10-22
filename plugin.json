@@ -1,7 +1,6 @@
 {
 	"name": "front",
-	"description": "The default front for oauthd.",
-	"version": "0.0.2",
+	"description": "Provides you with an interface to manage your oauthd instance",
 	"main": "index.js",
 	"type": "global-interface"
 }

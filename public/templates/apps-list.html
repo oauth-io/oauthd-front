@@ -7,11 +7,11 @@
             <div class="double-bounce2"></div>
         </div>
     </div>
-    <div class="row list">
+    <!-- div class="row list">
         <div class="col-md-4 app" ng-repeat="app in apps">
             <div>
                 <div class="title">
-                <!-- <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name | capitalize }}</a> -->
+                <!-- <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name | capitalize }}</a> --
                 {{ app.name | capitalize }}
                 </div>
                 <div class="domains">
@@ -30,7 +30,11 @@
                 </div>
             </div>
         </div>
+    </div> -->
+    <div class="row list">
+        <appthumb app="app" ng-repeat="app in apps" />    
     </div>
+    
     <div class="clear"></div>
     
 </div>
