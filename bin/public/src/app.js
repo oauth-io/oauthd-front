@@ -154,7 +154,10 @@ module.exports = function(app) {
       $scope.domains_control = {};
       return $scope.create = function() {
         return AppService.create($scope.app).then(function(app) {
-          $state.go('dashboard.apps.all');
+          console.log(app);
+          $state.go('dashboard.apps.show', {
+            key: app.key
+          });
         }).fail(function(e) {
           console.log('failed', e);
         });

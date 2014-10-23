@@ -9,7 +9,10 @@ module.exports = (app) ->
 			$scope.create = () ->
 				AppService.create($scope.app)
 					.then (app) ->
-						$state.go 'dashboard.apps.all'
+						console.log app
+						$state.go 'dashboard.apps.show', {
+							key: app.key
+						}
 						return
 					.fail (e) ->
 						console.log 'failed', e
