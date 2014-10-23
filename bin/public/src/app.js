@@ -59,9 +59,7 @@ app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config([
       templateUrl: '/templates/help.html',
       controller: 'HelpCtrl'
     });
-    $urlRouterProvider.when("/", "/home");
-    $urlRouterProvider.when("", "/home");
-    $urlRouterProvider.when("/apps", "/apps/all");
+    $urlRouterProvider.when("", "dashboard.home");
     $urlRouterProvider.otherwise('/login');
     return $locationProvider.html5Mode(true);
   }
@@ -154,7 +152,6 @@ module.exports = function(app) {
       $scope.domains_control = {};
       return $scope.create = function() {
         return AppService.create($scope.app).then(function(app) {
-          console.log(app);
           $state.go('dashboard.apps.show', {
             key: app.key
           });
@@ -596,7 +593,15 @@ module.exports = function(app) {
         $state.go('login');
       }
       PluginService.getAll().then(function(plugins) {
+        var k, v;
         $scope.plugins = plugins;
+        $scope.interface_enabled = 0;
+        for (k in plugins) {
+          v = plugins[k];
+          if (v.interface_enabled) {
+            $scope.interface_enabled++;
+          }
+        }
         return $scope.$apply();
       }).fail(function(e) {
         return console.log(e);

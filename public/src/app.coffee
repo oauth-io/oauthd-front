@@ -61,10 +61,7 @@ app = angular.module("oauthd", ["ui.router", 'ui.bootstrap']).config(["$statePro
 			templateUrl: '/templates/help.html'
 			controller: 'HelpCtrl'
 		
-
-		$urlRouterProvider.when "/", "/home"
-		$urlRouterProvider.when "", "/home"
-		$urlRouterProvider.when "/apps", "/apps/all"
+		$urlRouterProvider.when "", "dashboard.home"
 
 		$urlRouterProvider.otherwise '/login' 
 
