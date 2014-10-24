@@ -13,7 +13,7 @@ module.exports = (app) ->
 					pass: $scope.user.pass
 				})
 					.then (user) ->
-						$state.go('dashboard')
+						$state.go('dashboard.home')
 						return
 					.fail (e) ->
 						$scope.error = e
