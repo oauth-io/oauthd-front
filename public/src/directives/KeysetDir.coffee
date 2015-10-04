@@ -42,11 +42,12 @@ module.exports = (app) ->
 										input.val($scope.keyset?.parameters?[k])
 										selectize = input.selectize({
 											delimiter: ' '
-											persist: false
+											persist: true
 											valueField: 'name'
 											labelField: 'value'
 											searchField: ['name', 'value']
 											options: values
+											create: true
 											render: {
 												item: (item, escape) ->
 													return '<div><span class="name">' + item.name + '</span></div>'
@@ -75,11 +76,12 @@ module.exports = (app) ->
 										field.append input
 										selectize = input.selectize({
 											delimiter: ' '
-											persist: false
+											persist: true
 											valueField: 'name'
 											labelField: 'value'
 											searchField: ['name', 'value']
 											options: values
+											create: true
 											render: {
 												item: (item, escape) ->
 													return '<div><span class="name">' + item.name + '</span></div>'
