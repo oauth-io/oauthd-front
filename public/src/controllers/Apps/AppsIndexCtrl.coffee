@@ -15,11 +15,11 @@ module.exports = (app) ->
 									$scope.apps.push a
 									cb()
 								.fail (e) ->
-									console.log 'err', e
+									console.error e
 						, (err) ->
 							$scope.$apply()
 					.fail (e) ->
-						console.log e
+						console.error e
 					.finally () ->
 						$scope.loadingApps = false
 						$scope.$apply()
@@ -33,7 +33,7 @@ module.exports = (app) ->
 						.then () ->
 							reloadApps()
 						.fail () ->
-							console.log e
+							console.error e
 
-			
+
 	])

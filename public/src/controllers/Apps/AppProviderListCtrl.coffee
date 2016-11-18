@@ -10,7 +10,7 @@ module.exports = (app) ->
 					$scope.setProvider 'Add a provider'
 					$scope.$apply()
 				.fail (e) ->
-					console.log e
+					console.error e
 
 			ProviderService.getAll()
 				.then (providers) ->
@@ -18,7 +18,7 @@ module.exports = (app) ->
 					$scope.selectedProviders = providers
 					$scope.$apply()
 				.fail (e) ->
-					console.log e
+					console.error e
 				.finally () ->
 					$scope.loadingProviders = false
 					$scope.$apply()
@@ -27,9 +27,9 @@ module.exports = (app) ->
 				$timeout (->
 					$scope.loadingProviders = true
 					$scope.selectedProviders = $scope.providers
-					if $scope.query 
+					if $scope.query
 						if $scope.query.name and $scope.query.name isnt ""
 							$scope.selectedProviders = $filter('filter')($scope.selectedProviders, {name:$scope.query.name})
 					$scope.loadingProviders = false
-				), 500	
+				), 500
 	])

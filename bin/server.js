@@ -1,8 +1,6 @@
-var ecstatic, fs, restify;
+var fs, restify;
 
 restify = require('restify');
-
-ecstatic = require('ecstatic');
 
 fs = require('fs');
 

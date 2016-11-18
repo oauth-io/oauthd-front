@@ -7,7 +7,7 @@ module.exports = (app) ->
 				.then (config) ->
 					$scope.config = config
 				.fail (e) ->
-					console.log "HomeCtrl getConfig error", e
+					console.error e
 				.finally () ->
 					$scope.$apply()
 	]

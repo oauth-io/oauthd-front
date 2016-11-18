@@ -1,7 +1,7 @@
 <div class="menu-panel">
 	<div class="header">
 		<div class="normal pull-right logout-button"><a href="javascript:void(0);" ng-click="logout()"> <span class="fa fa-sign-out"></span> Logout</a></div>
-		<img class="logo" src="/img/logo.png" alt=""> oauthd 
+		<img class="logo" ng-src="/img/logo.png" alt=""> oauthd
 	</div>
 	<div class="section">
 		<a ui-sref="dashboard.home" ng-class="{active: state.current.name == 'dashboard.home' }" class="button">Home</a>
@@ -15,5 +15,5 @@
 	</div>
 </div>
 <div class="content">
-	<div ui-view></div>	
+	<div ui-view></div>
 </div>

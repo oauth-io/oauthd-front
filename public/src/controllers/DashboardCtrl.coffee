@@ -14,7 +14,7 @@ module.exports = (app) ->
 							$scope.interface_enabled++
 					$scope.$apply()
 				.fail (e) ->
-					console.log e
+					console.error e
 
 			$scope.state = $state
 	])

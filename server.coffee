@@ -1,5 +1,4 @@
 restify = require 'restify'
-ecstatic = require 'ecstatic'
 fs = require 'fs'
 
 module.exports = (env) ->

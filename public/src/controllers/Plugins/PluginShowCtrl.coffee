@@ -9,7 +9,7 @@ module.exports = (app) ->
 						plugin.url = "/plugins/" + plugin.name + '/index.html'
 					$scope.plugin = plugin
 				.fail (e) ->
-					console.log 'An error occured', e
+					console.error e
 				.finally () ->
 					$scope.$apply()
 	]

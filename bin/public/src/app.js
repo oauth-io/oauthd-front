@@ -156,7 +156,7 @@ module.exports = function(app) {
             key: app.key
           });
         }).fail(function(e) {
-          console.log('failed', e);
+          console.error(e);
         });
       };
     }
@@ -179,7 +179,7 @@ module.exports = function(app) {
         $scope.setProvider($stateParams.provider);
         return $scope.$apply();
       }).fail(function(e) {
-        return console.log(e);
+        return console.error(e);
       });
       KeysetService.get($stateParams.key, $scope.provider).then(function(keyset) {
         var k, ref, v;
@@ -202,7 +202,7 @@ module.exports = function(app) {
             key: $stateParams.key
           });
         }).fail(function(e) {
-          return console.log('error', e);
+          return console.error(e);
         });
       };
       $scope["delete"] = function() {
@@ -212,7 +212,7 @@ module.exports = function(app) {
               key: $stateParams.key
             });
           }).fail(function(e) {
-            return console.log('error', e);
+            return console.error(e);
           });
         }
       };
@@ -240,14 +240,14 @@ module.exports = function(app) {
         $scope.setProvider('Add a provider');
         return $scope.$apply();
       }).fail(function(e) {
-        return console.log(e);
+        return console.error(e);
       });
       ProviderService.getAll().then(function(providers) {
         $scope.providers = providers;
         $scope.selectedProviders = providers;
         return $scope.$apply();
       }).fail(function(e) {
-        return console.log(e);
+        return console.error(e);
       })["finally"](function() {
         $scope.loadingProviders = false;
         return $scope.$apply();
@@ -304,7 +304,7 @@ module.exports = function(app) {
           $scope.$apply();
           return $scope.domains_control.refresh();
         }).fail(function(e) {
-          console.log(e);
+          console.error(e);
           return $scope.error = e.message;
         });
       };
@@ -316,7 +316,7 @@ module.exports = function(app) {
               key: data.key
             });
           }).fail(function() {
-            console.log(e);
+            console.error(e);
             return $scope.error = e.message;
           });
         }
@@ -334,10 +334,9 @@ module.exports = function(app) {
           v = ref1[k];
           $scope.backend[k] = v;
         }
-        console.log($scope.backend);
         return $scope.$apply();
       }).fail(function(e) {
-        return console.log(e);
+        return console.error(e);
       });
       $scope.saveApp = function() {
         $scope.changed = false;
@@ -347,7 +346,7 @@ module.exports = function(app) {
             return AppService.update($scope.app).then(function() {
               return cb();
             }).fail(function(e) {
-              console.log('error', e);
+              console.error(e);
               $scope.error = e.message;
               return cb(e);
             });
@@ -379,7 +378,7 @@ module.exports = function(app) {
             $state.go('dashboard.apps.all');
             return $scope.error = void 0;
           }).fail(function(e) {
-            console.log('error', e);
+            console.error(e);
             return $scope.error = e.message;
           });
         }
@@ -435,7 +434,7 @@ module.exports = function(app) {
                   return res;
                 },
                 err: function() {
-                  return err;
+                  return err && err.message || JSON.stringify(err);
                 },
                 provider: function() {
                   return provider;
@@ -452,10 +451,9 @@ module.exports = function(app) {
                 }
               }
             });
-            console.log(err);
+            console.error(err);
             return false;
           }
-          console.log(res);
           return instance = $modal.open({
             templateUrl: '/templates/dashboard/modals/try-success.html',
             controller: 'AppTryModalCtrl',
@@ -491,14 +489,12 @@ module.exports = function(app) {
 module.exports = function(app) {
   return app.controller('AppTryModalCtrl', [
     '$scope', '$rootScope', '$modalInstance', 'success', 'err', 'provider', 'key', 'type', 'backend', function($scope, $rootScope, $modalInstance, success, err, provider, key, type, backend) {
-      console.log("AppTryModalCtrl");
       $scope.success = success;
       $scope.err = err;
       $scope.provider = provider;
       $scope.key = key;
       $scope.type = type;
       $scope.backend = backend;
-      console.log(success, err, type);
       return $scope.close = function() {
         return $modalInstance.dismiss();
       };
@@ -525,13 +521,13 @@ module.exports = function(app) {
               $scope.apps.push(a);
               return cb();
             }).fail(function(e) {
-              return console.log('err', e);
+              return console.error(e);
             });
           }, function(err) {
             return $scope.$apply();
           });
         }).fail(function(e) {
-          return console.log(e);
+          return console.error(e);
         })["finally"](function() {
           $scope.loadingApps = false;
           return $scope.$apply();
@@ -545,7 +541,7 @@ module.exports = function(app) {
           }).then(function() {
             return reloadApps();
           }).fail(function() {
-            return console.log(e);
+            return console.error(e);
           });
         }
       };
@@ -604,7 +600,7 @@ module.exports = function(app) {
         }
         return $scope.$apply();
       }).fail(function(e) {
-        return console.log(e);
+        return console.error(e);
       });
       return $scope.state = $state;
     }
@@ -622,7 +618,7 @@ module.exports = function(app) {
       return ConfigService.getConfig().then(function(config) {
         return $scope.config = config;
       }).fail(function(e) {
-        return console.log("HomeCtrl getConfig error", e);
+        return console.error(e);
       })["finally"](function() {
         return $scope.$apply();
       });
@@ -666,14 +662,14 @@ module.exports = function(app) {
               }
               return next();
             }).fail(function(e) {
-              console.log(e);
+              console.error(e);
               return next();
             });
           }, function(err) {
             return $scope.$apply();
           });
         }).fail(function(e) {
-          return console.log("HomeCtrl getAllApps error ", e);
+          return console.error(e);
         })["finally"](function() {
           $scope.loadingApps = false;
           return $scope.$apply();
@@ -689,7 +685,7 @@ module.exports = function(app) {
           }
           return results;
         }).fail(function(e) {
-          return console.log(e);
+          return console.error(e);
         })["finally"](function() {
           return $scope.$apply();
         });
@@ -697,7 +693,7 @@ module.exports = function(app) {
         return ConfigService.getConfig().then(function(config) {
           return $scope.config = config;
         }).fail(function(e) {
-          return console.log("HomeCtrl getConfig error", e);
+          return console.error(e);
         })["finally"](function() {
           $scope.loadingConfig = false;
           return $scope.$apply();
@@ -760,7 +756,7 @@ module.exports = function(app) {
         }
         return $scope.plugin = plugin;
       }).fail(function(e) {
-        return console.log('An error occured', e);
+        return console.error(e);
       })["finally"](function() {
         return $scope.$apply();
       });
@@ -999,7 +995,7 @@ module.exports = function(app) {
               }
               return results;
             }).fail(function(e) {
-              return console.log(e);
+              return console.error(e);
             });
           };
           if ($scope.provider != null) {
@@ -1524,12 +1520,6 @@ module.exports = function($http, $rootScope) {
         );
     }
 
-    function _each(coll, iterator) {
-        return _isArrayLike(coll) ?
-            _arrayEach(coll, iterator) :
-            _forEachOf(coll, iterator);
-    }
-
     function _arrayEach(arr, iterator) {
         var index = -1,
             length = arr.length;
@@ -1677,23 +1667,26 @@ module.exports = function($http, $rootScope) {
     async.eachOf = function (object, iterator, callback) {
         callback = _once(callback || noop);
         object = object || [];
-        var size = _isArrayLike(object) ? object.length : _keys(object).length;
-        var completed = 0;
-        if (!size) {
-            return callback(null);
-        }
-        _each(object, function (value, key) {
+
+        var iter = _keyIterator(object);
+        var key, completed = 0;
+
+        while ((key = iter()) != null) {
+            completed += 1;
             iterator(object[key], key, only_once(done));
-        });
+        }
+
+        if (completed === 0) callback(null);
+
         function done(err) {
+            completed--;
             if (err) {
                 callback(err);
             }
-            else {
-                completed += 1;
-                if (completed >= size) {
-                    callback(null);
-                }
+            // Check key is null in case iterator isn't exhausted
+            // and done resolved synchronously.
+            else if (key === null && completed <= 0) {
+                callback(null);
             }
         }
     };
@@ -1719,7 +1712,7 @@ module.exports = function($http, $rootScope) {
                         return callback(null);
                     } else {
                         if (sync) {
-                            async.nextTick(iterate);
+                            async.setImmediate(iterate);
                         } else {
                             iterate();
                         }
@@ -1800,7 +1793,8 @@ module.exports = function($http, $rootScope) {
 
     function _asyncMap(eachfn, arr, iterator, callback) {
         callback = _once(callback || noop);
-        var results = [];
+        arr = arr || [];
+        var results = _isArrayLike(arr) ? [] : {};
         eachfn(arr, function (value, index, callback) {
             iterator(value, function (err, v) {
                 results[index] = v;
@@ -1826,7 +1820,7 @@ module.exports = function($http, $rootScope) {
                 callback(err);
             });
         }, function (err) {
-            callback(err || null, memo);
+            callback(err, memo);
         });
     };
 
@@ -1834,6 +1828,20 @@ module.exports = function($http, $rootScope) {
     async.reduceRight = function (arr, memo, iterator, callback) {
         var reversed = _map(arr, identity).reverse();
         async.reduce(reversed, memo, iterator, callback);
+    };
+
+    async.transform = function (arr, memo, iterator, callback) {
+        if (arguments.length === 3) {
+            callback = iterator;
+            iterator = memo;
+            memo = _isArray(arr) ? [] : {};
+        }
+
+        async.eachOf(arr, function(v, k, cb) {
+            iterator(memo, v, k, cb);
+        }, function(err) {
+            callback(err, memo);
+        });
     };
 
     function _filter(eachfn, arr, iterator, callback) {
@@ -1944,15 +1952,26 @@ module.exports = function($http, $rootScope) {
         }
     };
 
-    async.auto = function (tasks, callback) {
+    async.auto = function (tasks, concurrency, callback) {
+        if (typeof arguments[1] === 'function') {
+            // concurrency is optional, shift the args.
+            callback = concurrency;
+            concurrency = null;
+        }
         callback = _once(callback || noop);
         var keys = _keys(tasks);
         var remainingTasks = keys.length;
         if (!remainingTasks) {
             return callback(null);
         }
+        if (!concurrency) {
+            concurrency = remainingTasks;
+        }
 
         var results = {};
+        var runningTasks = 0;
+
+        var hasError = false;
 
         var listeners = [];
         function addListener(fn) {
@@ -1976,8 +1995,10 @@ module.exports = function($http, $rootScope) {
         });
 
         _arrayEach(keys, function (k) {
+            if (hasError) return;
             var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
             var taskCallback = _restParam(function(err, args) {
+                runningTasks--;
                 if (args.length <= 1) {
                     args = args[0];
                 }
@@ -1987,6 +2008,8 @@ module.exports = function($http, $rootScope) {
                         safeResults[rkey] = val;
                     });
                     safeResults[k] = args;
+                    hasError = true;
+
                     callback(err, safeResults);
                 }
                 else {
@@ -2000,18 +2023,19 @@ module.exports = function($http, $rootScope) {
             var dep;
             while (len--) {
                 if (!(dep = tasks[requires[len]])) {
-                    throw new Error('Has inexistant dependency');
+                    throw new Error('Has nonexistent dependency in ' + requires.join(', '));
                 }
                 if (_isArray(dep) && _indexOf(dep, k) >= 0) {
                     throw new Error('Has cyclic dependencies');
                 }
             }
             function ready() {
-                return _reduce(requires, function (a, x) {
+                return runningTasks < concurrency && _reduce(requires, function (a, x) {
                     return (a && results.hasOwnProperty(x));
                 }, true) && !results.hasOwnProperty(k);
             }
             if (ready()) {
+                runningTasks++;
                 task[task.length - 1](taskCallback, results);
             }
             else {
@@ -2019,6 +2043,7 @@ module.exports = function($http, $rootScope) {
             }
             function listener() {
                 if (ready()) {
+                    runningTasks++;
                     removeListener(listener);
                     task[task.length - 1](taskCallback, results);
                 }
@@ -2204,7 +2229,7 @@ module.exports = function($http, $rootScope) {
                 } else if (test.apply(this, args)) {
                     iterator(next);
                 } else {
-                    callback(null);
+                    callback.apply(null, [null].concat(args));
                 }
             });
             iterator(next);
@@ -2310,8 +2335,17 @@ module.exports = function($http, $rootScope) {
         function _next(q, tasks) {
             return function(){
                 workers -= 1;
+
+                var removed = false;
                 var args = arguments;
                 _arrayEach(tasks, function (task) {
+                    _arrayEach(workersList, function (worker, index) {
+                        if (worker === task && !removed) {
+                            workersList.splice(index, 1);
+                            removed = true;
+                        }
+                    });
+
                     task.callback.apply(task, args);
                 });
                 if (q.tasks.length + workers === 0) {
@@ -2322,6 +2356,7 @@ module.exports = function($http, $rootScope) {
         }
 
         var workers = 0;
+        var workersList = [];
         var q = {
             tasks: [],
             concurrency: concurrency,
@@ -2342,23 +2377,23 @@ module.exports = function($http, $rootScope) {
                 _insert(q, data, true, callback);
             },
             process: function () {
-                if (!q.paused && workers < q.concurrency && q.tasks.length) {
-                    while(workers < q.concurrency && q.tasks.length){
-                        var tasks = q.payload ?
-                            q.tasks.splice(0, q.payload) :
-                            q.tasks.splice(0, q.tasks.length);
+                while(!q.paused && workers < q.concurrency && q.tasks.length){
 
-                        var data = _map(tasks, function (task) {
-                            return task.data;
-                        });
+                    var tasks = q.payload ?
+                        q.tasks.splice(0, q.payload) :
+                        q.tasks.splice(0, q.tasks.length);
 
-                        if (q.tasks.length === 0) {
-                            q.empty();
-                        }
-                        workers += 1;
-                        var cb = only_once(_next(q, tasks));
-                        worker(data, cb);
+                    var data = _map(tasks, function (task) {
+                        return task.data;
+                    });
+
+                    if (q.tasks.length === 0) {
+                        q.empty();
                     }
+                    workers += 1;
+                    workersList.push(tasks[0]);
+                    var cb = only_once(_next(q, tasks));
+                    worker(data, cb);
                 }
             },
             length: function () {
@@ -2366,6 +2401,9 @@ module.exports = function($http, $rootScope) {
             },
             running: function () {
                 return workers;
+            },
+            workersList: function () {
+                return workersList;
             },
             idle: function() {
                 return q.tasks.length + workers === 0;
@@ -2490,16 +2528,17 @@ module.exports = function($http, $rootScope) {
     async.memoize = function (fn, hasher) {
         var memo = {};
         var queues = {};
+        var has = Object.prototype.hasOwnProperty;
         hasher = hasher || identity;
         var memoized = _restParam(function memoized(args) {
             var callback = args.pop();
             var key = hasher.apply(null, args);
-            if (key in memo) {
-                async.nextTick(function () {
+            if (has.call(memo, key)) {   
+                async.setImmediate(function () {
                     callback.apply(null, memo[key]);
                 });
             }
-            else if (key in queues) {
+            else if (has.call(queues, key)) {
                 queues[key].push(callback);
             }
             else {
@@ -2671,14 +2710,103 @@ module.exports = function($http, $rootScope) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":26}],26:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -2694,7 +2822,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -2711,7 +2839,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -2723,7 +2851,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 

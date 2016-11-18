@@ -67,7 +67,7 @@ module.exports = (app) ->
 						, {
 							method: 'POST'
 						}
-					else 
+					else
 						api '/apps/' + key + '/backend', (data) ->
 							defer.resolve data.data
 						, (e) ->

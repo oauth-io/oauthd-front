@@ -14,7 +14,7 @@ module.exports = (app) ->
 
 
 				update = () ->
-					
+
 					ProviderService.get $scope.provider
 						.then (config) ->
 
@@ -22,7 +22,7 @@ module.exports = (app) ->
 							$elt.html('')
 							for k of $scope.available_parameters
 								param_config = $scope.available_parameters[k]
-								
+
 
 								field = $(document.createElement('div'))
 								$elt.append field
@@ -68,7 +68,7 @@ module.exports = (app) ->
 											selectize.on 'change', () ->
 												$scope.keyset.parameters[k] = this.getValue()
 												$scope.control.change()
-												
+
 
 									if param_config.cardinality? && param_config.cardinality == '1'
 										# Create a selectize select
@@ -102,7 +102,7 @@ module.exports = (app) ->
 											selectize.on 'change', () ->
 												$scope.keyset.parameters[k] = this.getValue()
 												$scope.control.change()
-												
+
 								else
 									input = $(document.createElement('input'))
 									field.append input
@@ -115,7 +115,7 @@ module.exports = (app) ->
 
 
 						.fail (e) ->
-							console.log e
+							console.error e
 
 				if $scope.provider?
 					update()
@@ -130,9 +130,9 @@ module.exports = (app) ->
 				$scope.control.setKeyset = (keyset) ->
 					$scope.keyset = keyset
 					update()
-				
 
-				
+
+
 
 		}
 	]

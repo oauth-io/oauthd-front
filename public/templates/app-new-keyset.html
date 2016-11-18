@@ -14,7 +14,7 @@
     <ul class="row">
         <li ng-repeat="provider in selectedProviders" class="col-md-4">
             <div>
-                <img src="/api/providers/{{ provider.provider }}/logo" alt="{{ provider.name }} logo">
+                <img ng-src="/api/providers/{{ provider.provider }}/logo" alt="{{ provider.name }} logo">
                 &nbsp;&nbsp;<a ui-sref="dashboard.apps.keyset({ key: app.key, provider: provider.provider })">Add <strong>{{ provider.name }}</strong></a>
             </div>
         </li>

@@ -1,6 +1,6 @@
 {
   "name": "front",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "",
   "main": "Gruntfile.js",
   "scripts": {
@@ -9,17 +9,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "restify": "~3.0.3",
-    "envify": "^3.0.0",
-    "grunt-browserify": "^4.0.1",
-    "grunt-contrib-coffee": "^0.13.0",
-    "grunt-contrib-copy": "^0.8.1",
-    "grunt-contrib-less": "^0.11.4"
+    "restify": "^4.3.0",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^1.4.0"
   },
   "dependencies": {
     "async": "^1.4.2",
-    "ecstatic": "^0.5.4",
-    "q": "^1.4.1",
-    "sugar": "^1.4.1"
+    "q": "^1.4.1"
   }
 }

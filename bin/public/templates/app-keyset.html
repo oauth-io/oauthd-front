@@ -1,11 +1,11 @@
 <div class="app-keyset-form">
-    
+
     <div class="row">
 
- 
+
         <div class="keyset col-md-4">
             <keyseteditor  provider="provider" control="keysetEditorControl"/>
-           
+
         </div>
         <div class="col-md-8">
             <h4>Integration</h4>
@@ -31,14 +31,14 @@
                     <span class="title three">Configuring the app:</span>
                     <a href="{{ settings.createApp.url }}">Here</a><br>
                 </div>
-                <img src="/api/providers/{{ provider }}/config.png" alt="Creating an app on {{provider | capitalize }}'s website">
+                <img ng-src="/api/providers/{{ provider }}/config.png" alt="Creating an app on {{provider | capitalize }}'s website">
             </div>
             <div class="col-md-6">
                 <div class="title-parent">
                     <span class="title three">Getting the keys:</span>
                     <a href="{{ settings.copyingKey.url }}">Here</a><br>
                 </div>
-                <img src="/api/providers/{{ provider }}/keys.png" alt="Retrieving keys on {{provider | capitalize }}'s website">
+                <img ng-src="/api/providers/{{ provider }}/keys.png" alt="Retrieving keys on {{provider | capitalize }}'s website">
             </div>
         </div>
     </div>

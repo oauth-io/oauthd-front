@@ -14,8 +14,8 @@ module.exports = (app) ->
 						}
 						return
 					.fail (e) ->
-						console.log 'failed', e
+						console.error e
 						return
 
-			
+
 	])

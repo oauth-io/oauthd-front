@@ -1,7 +1,7 @@
 async = require 'async'
 
 module.exports = (app) ->
-	app.controller('AppShowCtrl', ['$state', '$scope', '$rootScope', '$location', '$modal', 'UserService', '$stateParams', 'AppService', 
+	app.controller('AppShowCtrl', ['$state', '$scope', '$rootScope', '$location', '$modal', 'UserService', '$stateParams', 'AppService',
 		($state, $scope, $rootScope, $location, $modal, UserService, $stateParams, AppService) ->
 			$scope.domains_control = {}
 			$scope.error = undefined
@@ -28,11 +28,11 @@ module.exports = (app) ->
 						$scope.setApp app
 						$scope.error = undefined
 						$scope.$apply()
-						$scope.domains_control.refresh()
+						$scope.domains_control.change()
 					.fail (e) ->
-						console.log e
+						console.error e
 						$scope.error = e.message
-			
+
 			$scope.getAppInfo(false)
 
 			$scope.resetKeys = () ->
@@ -43,7 +43,7 @@ module.exports = (app) ->
 								key: data.key
 							}
 						.fail () ->
-							console.log e
+							console.error e
 							$scope.error = e.message
 
 			AppService.getBackend $stateParams.key
@@ -55,10 +55,9 @@ module.exports = (app) ->
 					$scope.backend = {}
 					for k,v of $scope.original_backend
 						$scope.backend[k] = v
-					console.log $scope.backend
 					$scope.$apply()
 				.fail (e) ->
-					console.log e
+					console.error e
 
 			$scope.saveApp = () ->
 				$scope.changed = false
@@ -69,10 +68,10 @@ module.exports = (app) ->
 							.then () ->
 								cb()
 							.fail (e) ->
-								console.log 'error', e
+								console.error e
 								$scope.error = e.message
 								cb e
-					(cb) ->	
+					(cb) ->
 						AppService.setBackend $stateParams.key, $scope.backend?.name
 							.then () ->
 								cb()
@@ -83,9 +82,9 @@ module.exports = (app) ->
 					$scope.changed = true if err
 					$scope.appModified true if err
 					$scope.success = "Successfully saved changes"
-					
+
 					$scope.$apply()
- 
+
 			$scope.deleteApp = () ->
 				if confirm 'Are you sure you want to delete this app?'
 					AppService.del $scope.app
@@ -93,7 +92,7 @@ module.exports = (app) ->
 							$state.go 'dashboard.apps.all'
 							$scope.error = undefined
 						.fail (e) ->
-							console.log 'error', e
+							console.error e
 							$scope.error = e.message
 			timeout = undefined
 			$scope.$watch 'success', () ->
@@ -137,14 +136,14 @@ module.exports = (app) ->
 							controller: 'AppTryModalCtrl'
 							resolve:
 								success: -> return res
-								err: -> return err
+								err: -> return err && err.message || JSON.stringify(err)
 								provider: -> return provider
 								key: -> return key
 								type: -> return type
 								backend: -> return $scope.app.backend?.name
-						console.log err
+						console.error err
 						return false
-					console.log res
+
 					instance = $modal.open
 						templateUrl: '/templates/dashboard/modals/try-success.html'
 						controller: 'AppTryModalCtrl'
@@ -155,5 +154,5 @@ module.exports = (app) ->
 							key: -> return key
 							type: -> return type
 							backend: -> return $scope.app.backend?.name
-			
-	])	
+
+	])

@@ -16,11 +16,11 @@ module.exports = (app) ->
 					$scope.setProvider $stateParams.provider
 					$scope.$apply()
 				.fail (e) ->
-					console.log e
+					console.error e
 
 			# Filling the content
 			KeysetService.get $stateParams.key, $scope.provider
-				.then (keyset) ->	
+				.then (keyset) ->
 					$scope.keyset = keyset
 					$scope.original = {}
 					for k,v of $scope.keyset.parameters
@@ -38,7 +38,7 @@ module.exports = (app) ->
 							key: $stateParams.key
 						}
 					.fail (e) ->
-						console.log 'error', e
+						console.error e
 
 			$scope.delete = () ->
 				if confirm 'Are you sure you want to delete this keyset?'
@@ -48,7 +48,7 @@ module.exports = (app) ->
 								key: $stateParams.key
 							}
 						.fail (e) ->
-							console.log 'error', e
+							console.error e
 
 			ProviderService.getProviderSettings $stateParams.provider
 				.then (settings) ->
@@ -60,4 +60,4 @@ module.exports = (app) ->
 				$scope.changed = not angular.equals($scope.original, $scope.keysetEditorControl.getKeyset().parameters)
 				$scope.$apply()
 
-	])	
+	])
