@@ -28,7 +28,7 @@ module.exports = (app) ->
 						$scope.setApp app
 						$scope.error = undefined
 						$scope.$apply()
-						$scope.domains_control.change()
+						$scope.domains_control.refresh() if $scope.domains_control.refresh
 					.fail (e) ->
 						console.error e
 						$scope.error = e.message
@@ -89,7 +89,7 @@ module.exports = (app) ->
 				if confirm 'Are you sure you want to delete this app?'
 					AppService.del $scope.app
 						.then () ->
-							$state.go 'dashboard.apps.all'
+							$state.go 'dashboard.home'
 							$scope.error = undefined
 						.fail (e) ->
 							console.error e
